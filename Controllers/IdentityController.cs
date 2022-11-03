@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SalePortal.DbConnection;
+using SalePortal.Models;
 using System.Security.Claims;
 
 namespace SalePortal.Controllers
@@ -25,7 +28,6 @@ namespace SalePortal.Controllers
 
 
 
-        //[HttpPost("login")]
         [HttpPost]
         public async Task<IActionResult> ValidateData(string username, string password)
         {
@@ -49,6 +51,15 @@ namespace SalePortal.Controllers
             ViewData["Message"] = "Wrong username or password";
             return View("Index");
 
+        }
+
+        [Authorize]
+        public async Task<IActionResult> UserPage()
+        {
+            var claimId = User.Claims.First();
+            var userId = int.Parse(claimId.ToString().Split(':')[2].Trim()) ;
+            var ads = _context.commodities.Where(x => x.OwnerId == userId);
+            return View(await ads.ToListAsync());
         }
     }
 }

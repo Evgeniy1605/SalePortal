@@ -53,7 +53,7 @@ namespace SalePortal.wwwroot
         public IActionResult Create()
         {
             ViewData["OwnerId"] = new SelectList(_context.Users, "Id", "Id");
-            ViewData["TypeId"] = new SelectList(_context.Categories, "Id", "Id");
+            ViewData["TypeId"] = new SelectList(_context.Categories, "Id", "Name");
             return View();
         }
 
@@ -64,12 +64,14 @@ namespace SalePortal.wwwroot
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,OwnerId,PublicationDate,Description,TypeId,Image")] CommodityModel commodityModel)
         {
-            if (ModelState.IsValid)
+            /*if (ModelState.IsValid)
             {
-                _context.Add(commodityModel);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
+                
+            }*/
+            _context.Add(commodityModel);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+
             ViewData["OwnerId"] = new SelectList(_context.Users, "Id", "Id", commodityModel.OwnerId);
             ViewData["TypeId"] = new SelectList(_context.Categories, "Id", "Id", commodityModel.TypeId);
             return View(commodityModel);

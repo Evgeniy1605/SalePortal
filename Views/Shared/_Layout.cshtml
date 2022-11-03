@@ -25,10 +25,10 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a  class="nav-link pe-3 me-4 fw-bold " aria-current="page">HOME</a>
+                            <a class="nav-link pe-3 me-4 fw-bold " aria-current="page">HOME</a>
                         </li>
-                        
-                        
+
+
                         <li class="nav-item">
                             <a class="nav-link pe-3 me-4 fw-bold" href="#">PAGES</a>
                         </li>
@@ -46,7 +46,7 @@
                         <li class=" nav-item pe-3">
 
                         </li>
-                        
+
                     </ul>
                 </div>
             </div>
@@ -71,20 +71,20 @@
                         <li><a asp-controller="" asp-action="" class="dropdown-item">Category</a></li>
                         <li><a asp-controller="" asp-action="" class="dropdown-item">Category</a></li>
                         <li><a asp-controller="" asp-action="" class="dropdown-item">Category</a></li>
-                        
-                        
+
+
                     </ul>
                 </div>
             </div>
             <div class="col-lg-9">
                 <div class="d-lg-flex">
                     <div class="d-lg-flex align-items-center border">
-                        
+
                         <form method="post" asp-controller="" asp-action="">
                             <div class="d-flex align-items-center w-100 h-100 ps-lg-0 ps-sm-3">
                                 <input name="Find" class=" ps-md-0 ps-3 " type="text" placeholder="what do you need?">
                                 <div class="sb"></div>
-                                
+
                                 <button type="submit" value="FindItem" class="btn btn-primary d-flex align-items-center justify-content-center "> SEARCH</button>
                             </div>
                         </form>
@@ -92,29 +92,39 @@
                     <div class="d-flex align-items-center ms-lg-auto mt-lg-0 mt-3 pe-2">
 
                         <div class="d-flex flex-column ps-2">
-                            <a class="align-items-center" >
-                                
-                            </a>
-                            <a asp-controller="CommodityModels" asp-action="Index" class="btn btn-primary">Add a new</a>
+                            <a class="align-items-center">
 
+                            </a>
+                            <div class="text-center" >
+                                
+                                <a asp-action="UserPage" asp-controller="Identity">
+                                    <img asp-append-version="true" width="40" src="Icons/user2.png" />
+                                </a>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <h6>Hello </h6>
+                                    <h5>@User.Identity.Name</h5>
+
+                                }
+                            </div>
                         </div>
                     </div>
                 </div>
 
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+                <div class="container">
+                    <main role="main" class="pb-3">
+                        @RenderBody()
+                    </main>
+                </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2022 - SalePortal - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+                <footer class="border-top footer text-muted">
+                    <div class="container">
+                        &copy; 2022 - SalePortal - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                    </div>
+                </footer>
+                <script src="~/lib/jquery/dist/jquery.min.js"></script>
+                <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+                <script src="~/js/site.js" asp-append-version="true"></script>
+                @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
