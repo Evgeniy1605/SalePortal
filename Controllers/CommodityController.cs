@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,13 +12,15 @@ using SalePortal.Models;
 
 namespace SalePortal.wwwroot
 {
-    public class CommodityModelsController : Controller
+    public class CommodityController : Controller
     {
         private readonly SalePortalDbConnection _context;
+        private readonly IWebHostEnvironment _environment;
 
-        public CommodityModelsController(SalePortalDbConnection context)
+        public CommodityController(SalePortalDbConnection context, IWebHostEnvironment environment)
         {
             _context = context;
+            _environment = environment;
         }
 
         // GET: CommodityModels
@@ -50,6 +53,7 @@ namespace SalePortal.wwwroot
         }
 
         // GET: CommodityModels/Create
+        [Authorize]
         public IActionResult Create()
         {
             ViewData["OwnerId"] = new SelectList(_context.Users, "Id", "Id");
@@ -60,21 +64,44 @@ namespace SalePortal.wwwroot
         // POST: CommodityModels/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,OwnerId,PublicationDate,Description,TypeId,Image")] CommodityModel commodityModel)
+        public async Task<IActionResult> Create([Bind("Id,Name,OwnerId,PublicationDate,Description,TypeId,Image")] CommodityEntity commodityModel, IFormFile ImageFile)
         {
-            /*if (ModelState.IsValid)
-            {
-                
-            }*/
+            // 
+            var OwnerId = int.Parse(User.Claims.ToList()[0].ToString().Split(':')[2].Trim());
+            commodityModel.OwnerId = OwnerId;
+            DateTime dateTime = DateTime.Now;
+            commodityModel.PublicationDate = dateTime;
+            commodityModel.Image = " ";
             _context.Add(commodityModel);
+            await _context.SaveChangesAsync();
+
+            var commodityModelSaved = _context.commodities.SingleOrDefault(x => x == commodityModel);
+            var ImageExtention = Path.GetExtension(ImageFile.FileName);
+
+
+            if (ImageExtention == ".png" )
+            {
+                var path = Path.Combine(_environment.WebRootPath, "Images", commodityModelSaved.Id.ToString() + ImageExtention);
+                using (var uploading = new FileStream(path, FileMode.Create))
+                {
+                    await ImageFile.CopyToAsync(uploading);
+                    commodityModelSaved.Image = path;
+                }
+            }
+            else
+            {
+                commodityModelSaved.Image = " ";
+            }
+            _context.commodities.Update(commodityModelSaved);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
 
-            ViewData["OwnerId"] = new SelectList(_context.Users, "Id", "Id", commodityModel.OwnerId);
+            /*ViewData["OwnerId"] = new SelectList(_context.Users, "Id", "Id", commodityModel.OwnerId);
             ViewData["TypeId"] = new SelectList(_context.Categories, "Id", "Id", commodityModel.TypeId);
-            return View(commodityModel);
+            return View(commodityModel);*/
         }
 
         // GET: CommodityModels/Edit/5
@@ -100,7 +127,7 @@ namespace SalePortal.wwwroot
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,OwnerId,PublicationDate,Description,TypeId,Image")] CommodityModel commodityModel)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,OwnerId,PublicationDate,Description,TypeId,Image")] CommodityEntity commodityModel)
         {
             if (id != commodityModel.Id)
             {

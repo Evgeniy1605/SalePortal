@@ -12,6 +12,6 @@ namespace SalePortal.DbConnection
 
         public DbSet<Category> Categories { get; set; }
         public DbSet<UserModel> Users { get; set; }
-        public DbSet<CommodityModel> commodities { get; set; } 
+        public DbSet<CommodityEntity> commodities { get; set; } 
     }
 }
