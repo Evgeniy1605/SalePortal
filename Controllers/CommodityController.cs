@@ -11,11 +11,11 @@ using SalePortal.Models;
 
 namespace SalePortal.wwwroot
 {
-    public class CommodityModelsController : Controller
+    public class CommodityController : Controller
     {
         private readonly SalePortalDbConnection _context;
 
-        public CommodityModelsController(SalePortalDbConnection context)
+        public CommodityController(SalePortalDbConnection context)
         {
             _context = context;
         }
@@ -64,12 +64,12 @@ namespace SalePortal.wwwroot
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,OwnerId,PublicationDate,Description,TypeId,Image")] CommodityModel commodityModel)
         {
-            /*if (ModelState.IsValid)
-            {
-                
-            }*/
+            
             _context.Add(commodityModel);
             await _context.SaveChangesAsync();
+            //
+            var c = _context.commodities.Where(x => x == commodityModel).ToList();
+
             return RedirectToAction(nameof(Index));
 
             ViewData["OwnerId"] = new SelectList(_context.Users, "Id", "Id", commodityModel.OwnerId);
