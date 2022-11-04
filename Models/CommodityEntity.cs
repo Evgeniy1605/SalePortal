@@ -2,7 +2,7 @@
 
 namespace SalePortal.Models
 {
-    public class CommodityModel
+    public class CommodityEntity
     {
         public int Id { get; set; }
         public string Name { get; set; }

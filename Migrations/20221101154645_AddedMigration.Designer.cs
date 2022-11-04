@@ -41,7 +41,7 @@ namespace SalePortal.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("SalePortal.Models.CommodityModel", b =>
+            modelBuilder.Entity("SalePortal.Models.CommodityEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -108,7 +108,7 @@ namespace SalePortal.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("SalePortal.Models.CommodityModel", b =>
+            modelBuilder.Entity("SalePortal.Models.CommodityEntity", b =>
                 {
                     b.HasOne("SalePortal.Models.UserModel", "Owner")
                         .WithMany()
