@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SalePortal.Models
+namespace SalePortal.Data
 {
-    public class Category
+    public class CategoryEntity
     {
-        
+
         public int Id { get; set; }
         public string Name { get; set; }
     }

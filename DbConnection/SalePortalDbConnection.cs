@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SalePortal.Models;
+using SalePortal.Data;
 
 namespace SalePortal.DbConnection
 {
@@ -10,8 +10,8 @@ namespace SalePortal.DbConnection
 
         }
 
-        public DbSet<Category> Categories { get; set; }
-        public DbSet<UserModel> Users { get; set; }
+        public DbSet<CategoryEntity> Categories { get; set; }
+        public DbSet<UserEntity> Users { get; set; }
         public DbSet<CommodityEntity> commodities { get; set; } 
     }
 }

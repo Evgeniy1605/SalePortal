@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SalePortal.Data;
 using SalePortal.DbConnection;
-using SalePortal.Models;
 
 namespace SalePortal.wwwroot
 {
@@ -67,7 +67,7 @@ namespace SalePortal.wwwroot
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,OwnerId,PublicationDate,Description,TypeId,Image")] CommodityEntity commodityModel, IFormFile ImageFile)
+        public async Task<IActionResult> Create([Bind("Id,Name,OwnerId,PublicationDate,Description,TypeId,Image,Price")] CommodityEntity commodityModel, IFormFile ImageFile)
         {
             // 
             var OwnerId = int.Parse(User.Claims.ToList()[0].ToString().Split(':')[2].Trim());
