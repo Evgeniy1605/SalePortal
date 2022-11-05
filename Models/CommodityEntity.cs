@@ -19,5 +19,6 @@ namespace SalePortal.Models
         public int TypeId { get; set; }
         public Category Type { get; set; }
         public string Image { get; set; }
+        public decimal Price { get; set; }
     }
 }
