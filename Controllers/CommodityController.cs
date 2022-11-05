@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SalePortal.Data;
 using SalePortal.DbConnection;
+using SalePortal.Models;
 
 namespace SalePortal.wwwroot
 {
@@ -16,9 +18,10 @@ namespace SalePortal.wwwroot
     {
         private readonly SalePortalDbConnection _context;
         private readonly IWebHostEnvironment _environment;
-
-        public CommodityController(SalePortalDbConnection context, IWebHostEnvironment environment)
+        private readonly IMapper _mapper;
+        public CommodityController(SalePortalDbConnection context, IWebHostEnvironment environment, IMapper mapper)
         {
+            _mapper = mapper;
             _context = context;
             _environment = environment;
         }
@@ -56,7 +59,7 @@ namespace SalePortal.wwwroot
         [Authorize]
         public IActionResult Create()
         {
-            ViewData["OwnerId"] = new SelectList(_context.Users, "Id", "Id");
+            //ViewData["OwnerId"] = new SelectList(_context.Users, "Id", "Id");
             ViewData["TypeId"] = new SelectList(_context.Categories, "Id", "Name");
             return View();
         }
@@ -67,10 +70,10 @@ namespace SalePortal.wwwroot
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,OwnerId,PublicationDate,Description,TypeId,Image,Price")] CommodityEntity commodityModel, IFormFile ImageFile)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,TypeId,Price")] CommodityInputModel model, IFormFile ImageFile)
         {
-            // 
-            var OwnerId = int.Parse(User.Claims.ToList()[0].ToString().Split(':')[2].Trim());
+            CommodityEntity commodityModel = _mapper.Map<CommodityEntity>(model);
+            var OwnerId = Library.GetUserId(User.Claims.ToList());
             commodityModel.OwnerId = OwnerId;
             DateTime dateTime = DateTime.Now;
             commodityModel.PublicationDate = dateTime;
@@ -82,26 +85,22 @@ namespace SalePortal.wwwroot
             var ImageExtention = Path.GetExtension(ImageFile.FileName);
 
 
-            if (ImageExtention == ".png" )
+            if (ImageFile != null && ImageExtention == ".png" )
             {
                 var path = Path.Combine(_environment.WebRootPath, "Images", commodityModelSaved.Id.ToString() + ImageExtention);
                 using (var uploading = new FileStream(path, FileMode.Create))
                 {
                     await ImageFile.CopyToAsync(uploading);
                     commodityModelSaved.Image = path;
+                    _context.commodities.Update(commodityModelSaved);
+                    await _context.SaveChangesAsync();
                 }
             }
-            else
-            {
-                commodityModelSaved.Image = " ";
-            }
-            _context.commodities.Update(commodityModelSaved);
-            await _context.SaveChangesAsync();
+            
+            
             return RedirectToAction(nameof(Index));
 
-            /*ViewData["OwnerId"] = new SelectList(_context.Users, "Id", "Id", commodityModel.OwnerId);
-            ViewData["TypeId"] = new SelectList(_context.Categories, "Id", "Id", commodityModel.TypeId);
-            return View(commodityModel);*/
+           
         }
 
         // GET: CommodityModels/Edit/5
