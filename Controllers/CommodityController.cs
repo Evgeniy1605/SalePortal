@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SalePortal.Data;
 using SalePortal.DbConnection;
-using SalePortal.Models;
 
 namespace SalePortal.wwwroot
 {

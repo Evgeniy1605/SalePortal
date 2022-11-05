@@ -24,7 +24,7 @@ namespace SalePortal.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("SalePortal.Models.Category", b =>
+            modelBuilder.Entity("SalePortal.Models.CategoryEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -79,7 +79,7 @@ namespace SalePortal.Migrations
                     b.ToTable("commodities");
                 });
 
-            modelBuilder.Entity("SalePortal.Models.UserModel", b =>
+            modelBuilder.Entity("SalePortal.Models.UserEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -110,13 +110,13 @@ namespace SalePortal.Migrations
 
             modelBuilder.Entity("SalePortal.Models.CommodityEntity", b =>
                 {
-                    b.HasOne("SalePortal.Models.UserModel", "Owner")
+                    b.HasOne("SalePortal.Models.UserEntity", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SalePortal.Models.Category", "Type")
+                    b.HasOne("SalePortal.Models.CategoryEntity", "Type")
                         .WithMany()
                         .HasForeignKey("TypeId")
                         .OnDelete(DeleteBehavior.Cascade)
