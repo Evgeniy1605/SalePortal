@@ -1,4 +1,4 @@
-﻿@model SalePortal.Data.CommodityEntity
+﻿@model CommodityInputModel
 
 @{
     ViewData["Title"] = "Create";
@@ -34,9 +34,9 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="Image" class="control-label"></label>
+                
                 <input type="file" name="ImageFile" class="form-control" />
-                <span asp-validation-for="Image" class="text-danger"></span>
+               
             </div>
 
             <div class="form-group">
