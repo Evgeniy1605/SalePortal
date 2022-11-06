@@ -29,7 +29,7 @@ namespace SalePortal.wwwroot
 
 
 
-        [Authorize]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Index()
         {
             var salePortalDbConnection = _context.commodities.Include(c => c.Owner).Include(c => c.Type);
@@ -52,8 +52,8 @@ namespace SalePortal.wwwroot
             {
                 return NotFound();
             }
-
-            return View(commodityModel);
+            CommodityViewModel commodityViewModel = _mapper.Map<CommodityViewModel>(commodityModel);
+            return View(commodityViewModel);
         }
 
 
