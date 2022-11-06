@@ -9,7 +9,7 @@
 
 <div class="text-center">
     <h1>User page</h1>
-    <img src="Icons/user1.png" width="50"  />
+    <img src="Icons/user1.png" width="50" />
     <h2>Name SurName</h2>
 </div>
 <hr />
@@ -21,16 +21,23 @@
 <h3>Your adverts: </h3>
 @foreach (var item in Model)
 {
+
+
+
     string path = "~/Images/" + $"{item.Id}" + ".png";
-    <div>
-        <img src = "@path" asp-append-version="true" width="50" />
-        <p>@item.Name </p>
-        <p>@item.Price</p>
-        <p>@item.Description</p>
-        <p>@item.PublicationDate</p>
-    </div>
+    <form asp-controller="Commodity" asp-action="Details" asp-route-id = "@item.Id">
+        <button type="submit" >
+            <div>
+                <img src="@path" asp-append-version="true" width="50" />
+                <p>@item.Name </p>
+                <p>@item.Price</p>
+                <p>@item.Description</p>
+                <p>@item.PublicationDate</p>
+            </div>
+        </button>
+    </form>
     <br />
 }
-<div class="text-md-end" >
+<div class="text-md-end">
     <a class="btn btn-primary" asp-controller="Commodity" asp-action="Create">Add new </a>
 </div>

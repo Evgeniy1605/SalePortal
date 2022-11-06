@@ -12,6 +12,7 @@ using SalePortal.Data;
 using SalePortal.DbConnection;
 using SalePortal.Models;
 
+
 namespace SalePortal.wwwroot
 {
     public class CommodityController : Controller
@@ -26,7 +27,7 @@ namespace SalePortal.wwwroot
             _environment = environment;
         }
 
-        // GET: CommodityModels
+
 
         [Authorize]
         public async Task<IActionResult> Index()
@@ -35,7 +36,7 @@ namespace SalePortal.wwwroot
             return View(await salePortalDbConnection.ToListAsync());
         }
 
-        // GET: CommodityModels/Details/5
+
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.commodities == null)
@@ -55,7 +56,7 @@ namespace SalePortal.wwwroot
             return View(commodityModel);
         }
 
-        // GET: CommodityModels/Create
+
         [Authorize]
         public IActionResult Create()
         {
@@ -64,9 +65,7 @@ namespace SalePortal.wwwroot
             return View();
         }
 
-        // POST: CommodityModels/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -81,84 +80,29 @@ namespace SalePortal.wwwroot
             _context.Add(commodityModel);
             await _context.SaveChangesAsync();
 
-            var commodityModelSaved = _context.commodities.SingleOrDefault(x => x == commodityModel);
-            var ImageExtention = Path.GetExtension(ImageFile.FileName);
-
-
-            if (ImageFile != null && ImageExtention == ".png" )
+            if (ImageFile != null)
             {
-                var path = Path.Combine(_environment.WebRootPath, "Images", commodityModelSaved.Id.ToString() + ImageExtention);
-                using (var uploading = new FileStream(path, FileMode.Create))
+                var ImageExtention = Path.GetExtension(ImageFile.FileName);
+
+                if (ImageExtention == ".png")
                 {
-                    await ImageFile.CopyToAsync(uploading);
-                    commodityModelSaved.Image = path;
-                    _context.commodities.Update(commodityModelSaved);
-                    await _context.SaveChangesAsync();
-                }
-            }
-            
-            
-            return RedirectToAction(nameof(Index));
-
-           
-        }
-
-        // GET: CommodityModels/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.commodities == null)
-            {
-                return NotFound();
-            }
-
-            var commodityModel = await _context.commodities.FindAsync(id);
-            if (commodityModel == null)
-            {
-                return NotFound();
-            }
-            ViewData["OwnerId"] = new SelectList(_context.Users, "Id", "Id", commodityModel.OwnerId);
-            ViewData["TypeId"] = new SelectList(_context.Categories, "Id", "Id", commodityModel.TypeId);
-            return View(commodityModel);
-        }
-
-        // POST: CommodityModels/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,OwnerId,PublicationDate,Description,TypeId,Image")] CommodityEntity commodityModel)
-        {
-            if (id != commodityModel.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(commodityModel);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CommodityModelExists(commodityModel.Id))
+                    var commodityModelSaved = _context.commodities.SingleOrDefault(x => x == commodityModel);
+                    var path = Path.Combine(_environment.WebRootPath, "Images", commodityModelSaved.Id.ToString() + ImageExtention);
+                    using (var uploading = new FileStream(path, FileMode.Create))
                     {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
+                        await ImageFile.CopyToAsync(uploading);
+                        commodityModelSaved.Image = path;
+                        _context.commodities.Update(commodityModelSaved);
+                        await _context.SaveChangesAsync();
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["OwnerId"] = new SelectList(_context.Users, "Id", "Id", commodityModel.OwnerId);
-            ViewData["TypeId"] = new SelectList(_context.Categories, "Id", "Id", commodityModel.TypeId);
-            return View(commodityModel);
+            return RedirectToAction("UserPage", "Identity", new { aria = "" });
         }
 
-        // GET: CommodityModels/Delete/5
+       
+
+
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.commodities == null)
@@ -170,36 +114,36 @@ namespace SalePortal.wwwroot
                 .Include(c => c.Owner)
                 .Include(c => c.Type)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
+            int userId = Library.GetUserId(User.Claims.ToList());
+            if (userId != commodityModel.OwnerId)
+            {
+                return View("Error");
+            }
             if (commodityModel == null)
             {
                 return NotFound();
             }
-
-            return View(commodityModel);
-        }
-
-        // POST: CommodityModels/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.commodities == null)
-            {
-                return Problem("Entity set 'SalePortalDbConnection.commodities'  is null.");
-            }
-            var commodityModel = await _context.commodities.FindAsync(id);
+            commodityModel = await _context.commodities.FindAsync(id);
+            
             if (commodityModel != null)
             {
+                if (commodityModel.Image !=" ")
+                {
+                    System.IO.File.Delete(commodityModel.Image);
+                }
                 _context.commodities.Remove(commodityModel);
             }
-            
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("UserPage", "Identity", new { aria = "" });
         }
+
+
+
 
         private bool CommodityModelExists(int id)
         {
-          return _context.commodities.Any(e => e.Id == id);
+            return _context.commodities.Any(e => e.Id == id);
         }
     }
 }

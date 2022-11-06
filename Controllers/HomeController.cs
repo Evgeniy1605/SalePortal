@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using SalePortal.DbConnection;
 using SalePortal.Models;
 using System.Diagnostics;
 
@@ -6,11 +8,16 @@ namespace SalePortal.Controllers
 {
     public class HomeController : Controller
     {
-        
-
-        public IActionResult Index()
+        private readonly SalePortalDbConnection _context;
+        public HomeController(SalePortalDbConnection context)
         {
-            return View();
+            _context = context;
+        }
+
+        public async Task< IActionResult> Index()
+        {
+
+            return View(await _context.commodities.ToListAsync());
         }
 
         public IActionResult Privacy()
