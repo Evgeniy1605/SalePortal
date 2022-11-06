@@ -8,6 +8,8 @@ namespace SalePortal.Data
         public AddAutoMapperProfile()
         {
             CreateMap<CommodityInputModel, CommodityEntity>();
+
+            CreateMap<CommodityEntity, CommodityViewModel>();
         }
     }
 }
