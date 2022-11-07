@@ -100,8 +100,6 @@ namespace SalePortal.wwwroot
             return RedirectToAction("UserPage", "Identity", new { aria = "" });
         }
 
-       
-
 
         public async Task<IActionResult> Delete(int? id)
         {
@@ -138,12 +136,62 @@ namespace SalePortal.wwwroot
             return RedirectToAction("UserPage", "Identity", new { aria = "" });
         }
 
-
-
-
-        private bool CommodityModelExists(int id)
+        public async Task<IActionResult> Edit(int? id)
         {
-            return _context.commodities.Any(e => e.Id == id);
+            if (id == null || _context.commodities == null)
+            {
+                return NotFound();
+            }
+
+            var commodityModel = await _context.commodities.FindAsync(id);
+            if (commodityModel == null)
+            {
+                return NotFound();
+            }
+           CommodityInputModel inputModel = _mapper.Map<CommodityInputModel>(commodityModel);
+            return View(inputModel);
         }
+
+        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Price")] CommodityInputModel inputModel, IFormFile ImageFile)
+        {
+            if (id != inputModel.Id)
+            {
+                return NotFound();
+            }
+
+            var entity = await _context.commodities.SingleOrDefaultAsync(x => x.Id == id);
+            entity.Description = inputModel.Description;
+            entity.Name = inputModel.Name;
+            entity.Price = inputModel.Price;
+            if (ImageFile != null)
+            {
+                var ImageExtention = Path.GetExtension(ImageFile.FileName);
+
+                if (ImageExtention == ".png")
+                {
+                    System.IO.File.Delete(entity.Image);
+
+                    var path = Path.Combine(_environment.WebRootPath, "Images", entity.Id.ToString() + ImageExtention);
+                    using (var uploading = new FileStream(path, FileMode.Create))
+                    {
+                        await ImageFile.CopyToAsync(uploading);
+                        entity.Image = path;
+                        
+                    }
+                }
+            }
+
+            _context.commodities.Update(entity);
+
+            await _context.SaveChangesAsync();
+            
+            return RedirectToAction("UserPage", "Identity", new { aria = "" });
+           
+        }
+
+
     }
 }
