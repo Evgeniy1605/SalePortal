@@ -29,8 +29,8 @@
         <button type="submit" >
             <div>
                 <img src="@path" asp-append-version="true" width="50" />
-                <p>@item.Name </p>
-                <p>@item.Price</p>
+                <p>@(char.ToUpper(item.Name[0]) + item.Name.Substring(1))</p>
+                <p>@Math.Round(item.Price,2)</p>
                 <p>@item.Description</p>
                 <p>@item.PublicationDate</p>
             </div>

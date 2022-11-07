@@ -3,13 +3,16 @@ using SalePortal.Models;
 
 namespace SalePortal.Data
 {
-    public class AddAutoMapperProfile : Profile
+    public class AutoMapperProfile : Profile
     {
-        public AddAutoMapperProfile()
+        public AutoMapperProfile()
         {
             CreateMap<CommodityInputModel, CommodityEntity>();
 
             CreateMap<CommodityEntity, CommodityViewModel>();
+
+            CreateMap<CommodityEntity, CommodityInputModel>();
+
         }
     }
 }

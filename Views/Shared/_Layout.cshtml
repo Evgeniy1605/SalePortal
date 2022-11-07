@@ -80,9 +80,9 @@
                 <div class="d-lg-flex">
                     <div class="d-lg-flex align-items-center border">
 
-                        <form method="post" asp-controller="" asp-action="">
+                        <form method="post" asp-controller="Home" asp-action="Search">
                             <div class="d-flex align-items-center w-100 h-100 ps-lg-0 ps-sm-3">
-                                <input name="Find" class=" ps-md-0 ps-3 " type="text" placeholder="what do you need?">
+                                <input name="item" class=" ps-md-0 ps-3 " type="text" placeholder="what do you need?">
                                 <div class="sb"></div>
 
                                 <button type="submit" value="FindItem" class="btn btn-primary d-flex align-items-center justify-content-center "> SEARCH</button>
@@ -117,11 +117,7 @@
                     </main>
                 </div>
 
-                <footer class="border-top footer text-muted">
-                    <div class="container">
-                        &copy; 2022 - SalePortal - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                    </div>
-                </footer>
+                
                 <script src="~/lib/jquery/dist/jquery.min.js"></script>
                 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
                 <script src="~/js/site.js" asp-append-version="true"></script>
