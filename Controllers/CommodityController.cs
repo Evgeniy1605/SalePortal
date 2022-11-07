@@ -71,6 +71,7 @@ namespace SalePortal.wwwroot
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description,TypeId,Price")] CommodityInputModel model, IFormFile ImageFile)
         {
+            model.Name = model.Name.ToLower();
             CommodityEntity commodityModel = _mapper.Map<CommodityEntity>(model);
             var OwnerId = Library.GetUserId(User.Claims.ToList());
             commodityModel.OwnerId = OwnerId;
@@ -100,7 +101,7 @@ namespace SalePortal.wwwroot
             return RedirectToAction("UserPage", "Identity", new { aria = "" });
         }
 
-
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.commodities == null)
@@ -136,6 +137,7 @@ namespace SalePortal.wwwroot
             return RedirectToAction("UserPage", "Identity", new { aria = "" });
         }
 
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.commodities == null)
@@ -152,7 +154,8 @@ namespace SalePortal.wwwroot
             return View(inputModel);
         }
 
-        
+
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Price")] CommodityInputModel inputModel, IFormFile ImageFile)
@@ -164,7 +167,7 @@ namespace SalePortal.wwwroot
 
             var entity = await _context.commodities.SingleOrDefaultAsync(x => x.Id == id);
             entity.Description = inputModel.Description;
-            entity.Name = inputModel.Name;
+            entity.Name = inputModel.Name.ToLower().Trim();
             entity.Price = inputModel.Price;
             if (ImageFile != null)
             {
@@ -191,7 +194,5 @@ namespace SalePortal.wwwroot
             return RedirectToAction("UserPage", "Identity", new { aria = "" });
            
         }
-
-
     }
 }

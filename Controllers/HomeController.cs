@@ -20,12 +20,14 @@ namespace SalePortal.Controllers
             return View(await _context.commodities.ToListAsync());
         }
 
-        public IActionResult Privacy()
+        public async Task<IActionResult> Search(string item)
         {
-            return View();
+            var result = _context.commodities.Where(x => x.Name.Contains(item.ToLower().Trim()));
+            return View("Index", await result.ToListAsync());
         }
 
-      
-      
+
+
+
     }
 }
