@@ -20,11 +20,13 @@ namespace SalePortal.wwwroot
         private readonly SalePortalDbConnection _context;
         private readonly IWebHostEnvironment _environment;
         private readonly IMapper _mapper;
-        public CommodityController(SalePortalDbConnection context, IWebHostEnvironment environment, IMapper mapper)
+        private readonly ILibrary _library;
+        public CommodityController(SalePortalDbConnection context, IWebHostEnvironment environment, IMapper mapper, ILibrary library)
         {
             _mapper = mapper;
             _context = context;
             _environment = environment;
+            _library = library;
         }
 
 
@@ -73,7 +75,7 @@ namespace SalePortal.wwwroot
         {
             model.Name = model.Name.ToLower();
             CommodityEntity commodityModel = _mapper.Map<CommodityEntity>(model);
-            var OwnerId = Library.GetUserId(User.Claims.ToList());
+            var OwnerId = _library.GetUserId(User.Claims.ToList());
             commodityModel.OwnerId = OwnerId;
             DateTime dateTime = DateTime.Now;
             commodityModel.PublicationDate = dateTime;
@@ -114,7 +116,7 @@ namespace SalePortal.wwwroot
                 .Include(c => c.Type)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
-            int userId = Library.GetUserId(User.Claims.ToList());
+            int userId = _library.GetUserId(User.Claims.ToList());
             if (userId != commodityModel.OwnerId)
             {
                 return View("Error");

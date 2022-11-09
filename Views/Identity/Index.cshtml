@@ -3,13 +3,24 @@
 *@
 @{
 }
-<h1>Login</h1>
-<h2 class="text-danger">@ViewData["Message"]</h2>
 
-<form asp-controller="Identity" asp-action="ValidateData" method="post">
-    <p>Name:</p>
-    <input name="username" type="text" />
-    <p>Password:</p>
-    <input name="password" type="password" />
-    <button class="btn btn-primary" type="submit">submit</button>
-</form>
+<hr />
+
+<div id="login-form-wrap" class="text-center">
+    <h2>Login</h2>
+    <form asp-controller="Identity" asp-action="ValidateData" method="post">
+        <p>
+            <input type="text"  name="username" placeholder="Username" required><i class="validation"><span></span><span></span></i>
+        </p>
+        <p>
+            <input type="password" name="password" placeholder="Password" required><i class="validation"><span></span><span></span></i>
+        </p>
+        <p>
+            <button class="btn btn-primary" type="submit">submit</button>
+        </p>
+    </form>
+    <div id="create-account-wrap">
+        <p>Not a member? <a asp-action="Registration" asp-controller="Identity">Create Account</a><p>
+    </div><!--create-account-wrap-->
+</div><!--login-form-wrap-->
+<!-- partial -->
