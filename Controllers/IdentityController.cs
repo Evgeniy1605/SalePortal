@@ -61,5 +61,17 @@ namespace SalePortal.Controllers
             var ads = _context.commodities.Where(x => x.OwnerId == userId);
             return View(await ads.ToListAsync());
         }
+
+        public IActionResult Registration()
+        {
+            UserInputModel userInputModel = new UserInputModel();
+            return View(userInputModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Registration(UserInputModel userInput)
+        {
+            return View("Index");
+        }
     }
 }
