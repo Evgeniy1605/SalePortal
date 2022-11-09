@@ -3,11 +3,11 @@ using System.Security.Claims;
 
 namespace SalePortal.Data;
 
-public static class Library
+internal  class Library : ILibrary
 {
   
     
-    public static int GetUserId(List<Claim> claims)
+    public  int GetUserId(List<Claim> claims)
     {
         return int.Parse(claims.ToList()[0].ToString().Split(':')[2].Trim());
     }
