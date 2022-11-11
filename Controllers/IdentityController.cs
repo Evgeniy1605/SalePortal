@@ -16,7 +16,6 @@ namespace SalePortal.Controllers
 
         private readonly SalePortalDbConnection _context;
         private readonly ILibrary _library;
-        
 
         public IdentityController(SalePortalDbConnection context, ILibrary library)
         {

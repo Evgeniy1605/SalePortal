@@ -62,7 +62,6 @@ namespace SalePortal.wwwroot
         [Authorize]
         public IActionResult Create()
         {
-            //ViewData["OwnerId"] = new SelectList(_context.Users, "Id", "Id");
             ViewData["TypeId"] = new SelectList(_context.Categories, "Id", "Name");
             return View();
         }
@@ -142,6 +141,7 @@ namespace SalePortal.wwwroot
         [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
+            int userId = _library.GetUserId(User.Claims.ToList());
             if (id == null || _context.commodities == null)
             {
                 return NotFound();
@@ -152,10 +152,13 @@ namespace SalePortal.wwwroot
             {
                 return NotFound();
             }
+            if (userId != commodityModel.OwnerId)
+            {
+                return BadRequest();
+            }
            CommodityInputModel inputModel = _mapper.Map<CommodityInputModel>(commodityModel);
             return View(inputModel);
         }
-
 
         [Authorize]
         [HttpPost]
@@ -183,16 +186,12 @@ namespace SalePortal.wwwroot
                     using (var uploading = new FileStream(path, FileMode.Create))
                     {
                         await ImageFile.CopyToAsync(uploading);
-                        entity.Image = path;
-                        
+                        entity.Image = path;  
                     }
                 }
             }
-
             _context.commodities.Update(entity);
-
             await _context.SaveChangesAsync();
-            
             return RedirectToAction("UserPage", "Identity", new { aria = "" });
            
         }
