@@ -59,13 +59,11 @@ internal  class Library : ILibrary
         var hash = sha.ComputeHash(asBiteArray);
         return (Convert.ToBase64String(hash));
     }
-    public async Task<bool> ToRegisterAUser(UserInputModel inputUser)
+    public async Task ToRegisterAUser(UserInputModel inputUser)
     {
         inputUser.Password = ToHashPassword(inputUser.Password);
         UserEntity user = _mapper.Map<UserEntity>(inputUser);
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
-
-        return true;
     }
 }

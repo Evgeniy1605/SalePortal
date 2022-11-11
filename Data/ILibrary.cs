@@ -7,6 +7,6 @@ namespace SalePortal.Data
     {
         public int GetUserId(List<Claim> claims);
         public ClaimsPrincipal ValidateUserData(string username, string password);
-        public  Task<bool> ToRegisterAUser(UserInputModel inputModel);
+        public Task ToRegisterAUser(UserInputModel inputModel);
     }
 }

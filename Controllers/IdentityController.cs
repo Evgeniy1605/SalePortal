@@ -16,11 +16,10 @@ namespace SalePortal.Controllers
 
         private readonly SalePortalDbConnection _context;
         private readonly ILibrary _library;
-        private readonly IMapper _mapper;
+        
 
-        public IdentityController(SalePortalDbConnection context, ILibrary library, IMapper mapper)
+        public IdentityController(SalePortalDbConnection context, ILibrary library)
         {
-            _mapper= mapper;
             _library = library;
             _context = context;
         }
