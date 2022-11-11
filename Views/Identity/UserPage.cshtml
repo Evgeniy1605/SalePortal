@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SalePortal.Data.CommodityEntity>
+﻿@model List<SalePortal.Data.CommodityEntity>
 @{
     var claims = User.Claims.ToList();
     var Name = User.Identity.Name;
@@ -10,12 +10,12 @@
 <div class="text-center">
     <h1>User page</h1>
     <img src="Icons/user1.png" width="50" />
-    <h2>Name SurName</h2>
+    <h2>@Name @SurName</h2>
 </div>
 <hr />
-<p>Phone number: PhoneNumber</p>
+<p>Phone number: @EmailAddress</p>
 <br />
-<p>Email: EmailAddress</p>
+<p>Email: @EmailAddress</p>
 <hr />
 
 <h3>Your adverts: </h3>

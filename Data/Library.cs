@@ -4,6 +4,8 @@ using SalePortal.DbConnection;
 using System.Security.Claims;
 using SalePortal;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
+using System.Security.Cryptography;
 
 namespace SalePortal.Data;
 
@@ -22,7 +24,7 @@ internal  class Library : ILibrary
     public  ClaimsPrincipal ValidateUserData(string username, string password)
     {
 
-        var expectedUser = _context.Users.SingleOrDefault(x => x.Name == username || x.Password == password);
+        var expectedUser = _context.Users.SingleOrDefault(x => x.Name == username && x.Password == password);
 
         if (expectedUser != null)
         {
@@ -44,5 +46,20 @@ internal  class Library : ILibrary
             return ClaimsPrincipal;
         }
         
+    }
+    public string ToHashPassword(string password)
+    {
+        var sha = SHA256.Create();
+        var asBiteArray = Encoding.Default.GetBytes(password);
+        var hash = sha.ComputeHash(asBiteArray);
+        return (Convert.ToBase64String(hash));
+    }
+    public async Task<bool> ToRegisterAUser(UserEntity user)
+    {
+
+        await _context.Users.AddAsync(user);
+        await _context.SaveChangesAsync();
+
+        return true;
     }
 }

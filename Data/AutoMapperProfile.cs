@@ -12,7 +12,8 @@ namespace SalePortal.Data
             CreateMap<CommodityEntity, CommodityViewModel>();
 
             CreateMap<CommodityEntity, CommodityInputModel>();
-
+            CreateMap<UserInputModel, UserEntity>();
+            
         }
     }
 }

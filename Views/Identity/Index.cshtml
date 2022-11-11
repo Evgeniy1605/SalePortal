@@ -9,6 +9,7 @@
 <div id="login-form-wrap" class="text-center">
     <h2>Login</h2>
     <h1 class="text-danger" > @ViewData["Message"]</h1>
+    <h1 class="text-success">@ViewData["Succeeded"]</h1>
     <form asp-controller="Identity" asp-action="ValidateData" method="post">
         <p>
             <input type="text"  name="username" placeholder="Username" required><i class="validation"><span></span><span></span></i>

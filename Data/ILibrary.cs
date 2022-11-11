@@ -7,5 +7,7 @@ namespace SalePortal.Data
         public int GetUserId(List<Claim> claims);
 
         public ClaimsPrincipal ValidateUserData(string username, string password);
+        public string ToHashPassword(string password);
+        public  Task<bool> ToRegisterAUser(UserEntity user);
     }
 }
