@@ -68,5 +68,12 @@ namespace SalePortal.Controllers
             }
             return View("Error");
         }
+
+        [Authorize]
+        public async Task<IActionResult> LogOut()
+        {
+            await HttpContext.SignOutAsync();
+            return RedirectToAction("Index", "Home", new { aria = "" });
+        }
     }
 }

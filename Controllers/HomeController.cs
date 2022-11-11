@@ -16,7 +16,6 @@ namespace SalePortal.Controllers
 
         public async Task< IActionResult> Index()
         {
-            //_context.commodities.
             return View(await _context.commodities.OrderByDescending(x => x.PublicationDate).ToListAsync());
         }
 
