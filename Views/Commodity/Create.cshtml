@@ -5,8 +5,6 @@
 }
 
 <h1>Create</h1>
-
-<h4>CommodityModel</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -32,23 +30,22 @@
                 <label asp-for="TypeId" class="control-label"></label>
                 <select asp-for="TypeId" class="form-control" asp-items="ViewBag.TypeId"></select>
             </div>
-
+            <br />
             <div class="form-group">
-                
+                <label class="control-label">Image</label>
                 <input type="file" name="ImageFile" class="form-control" />
                
             </div>
-
+            <br />
             <div class="form-group">
+                
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+
 
 @section Scripts {
     @{

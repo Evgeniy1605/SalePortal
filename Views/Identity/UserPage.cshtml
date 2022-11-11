@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SalePortal.Data.CommodityEntity>
+﻿@model List<SalePortal.Data.CommodityEntity>
 @{
     var claims = User.Claims.ToList();
     var Name = User.Identity.Name;
@@ -10,12 +10,12 @@
 <div class="text-center">
     <h1>User page</h1>
     <img src="Icons/user1.png" width="50" />
-    <h2>Name SurName</h2>
+    <h2>@Name @SurName</h2>
 </div>
 <hr />
-<p>Phone number: PhoneNumber</p>
+<p>Phone number: @PhoneNumber</p>
 <br />
-<p>Email: EmailAddress</p>
+<p>Email: @EmailAddress</p>
 <hr />
 
 <h3>Your adverts: </h3>
@@ -25,8 +25,8 @@
 
 
     string path = "~/Images/" + $"{item.Id}" + ".png";
-    <form asp-controller="Commodity" asp-action="Details" asp-route-id = "@item.Id">
-        <button type="submit" >
+    <form  asp-controller="Commodity" asp-action="Details" asp-route-id = "@item.Id">
+        <button type="submit" class="CommodityBox">
             <div>
                 <img src="@path" asp-append-version="true" width="50" />
                 <p>@(char.ToUpper(item.Name[0]) + item.Name.Substring(1))</p>

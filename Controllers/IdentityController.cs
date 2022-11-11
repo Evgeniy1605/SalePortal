@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SalePortal.Data;
 using SalePortal.DbConnection;
 using SalePortal.Models;
 using System.Security.Claims;
@@ -13,9 +15,11 @@ namespace SalePortal.Controllers
     {
 
         private readonly SalePortalDbConnection _context;
+        private readonly ILibrary _library;
 
-        public IdentityController(SalePortalDbConnection context)
+        public IdentityController(SalePortalDbConnection context, ILibrary library)
         {
+            _library = library;
             _context = context;
         }
 
@@ -26,38 +30,23 @@ namespace SalePortal.Controllers
             return View();
         }
 
-
-
         [HttpPost]
         public async Task<IActionResult> ValidateData(string username, string password)
         {
-            var expectedUser = _context.Users.SingleOrDefault(x => x.Name == username || x.Password == password);
-            
-            if (expectedUser != null)
+            var ClaimsPrincipal = _library.ValidateUserData(username, password);
+            if (ClaimsPrincipal.Identity != null)
             {
-                var claims = new List<Claim>();
-                claims.Add(new Claim(ClaimTypes.NameIdentifier, expectedUser.Id.ToString()));
-                claims.Add(new Claim(ClaimTypes.Name, expectedUser.Name));
-                claims.Add(new Claim("Password", password));
-                claims.Add(new Claim("SurName", expectedUser.SurName));
-                claims.Add(new Claim("Email", expectedUser.EmailAddress));
-                claims.Add(new Claim("PhoneNumber", expectedUser.PhoneNumber));
-                var ClaimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                var ClaimsPrincipal = new ClaimsPrincipal(ClaimsIdentity);
                 await HttpContext.SignInAsync(ClaimsPrincipal);
                 return RedirectToAction("Index", "Home", new {aria =""});
             }
-
             ViewData["Message"] = "Wrong username or password";
             return View("Index");
-
         }
 
         [Authorize]
         public async Task<IActionResult> UserPage()
         {
-            var claimId = User.Claims.First();
-            var userId = int.Parse(claimId.ToString().Split(':')[2].Trim()) ;
+            int userId = _library.GetUserId(User.Claims.ToList());
             var ads = _context.commodities.Where(x => x.OwnerId == userId);
             return View(await ads.ToListAsync());
         }
@@ -71,7 +60,20 @@ namespace SalePortal.Controllers
         [HttpPost]
         public async Task<IActionResult> Registration(UserInputModel userInput)
         {
-            return View("Index");
+            if (ModelState.IsValid)
+            {
+                await _library.ToRegisterAUser(userInput);
+                ViewData["Succeeded"] = "Registration succeeded !!!";
+                return View("Index");
+            }
+            return View("Error");
+        }
+
+        [Authorize]
+        public async Task<IActionResult> LogOut()
+        {
+            await HttpContext.SignOutAsync();
+            return RedirectToAction("Index", "Home", new { aria = "" });
         }
     }
 }
