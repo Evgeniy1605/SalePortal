@@ -35,17 +35,14 @@ namespace SalePortal.Controllers
         [HttpPost]
         public async Task<IActionResult> ValidateData(string username, string password)
         {
-            password = _library.ToHashPassword(password);
             var ClaimsPrincipal = _library.ValidateUserData(username, password);
             if (ClaimsPrincipal.Identity != null)
             {
                 await HttpContext.SignInAsync(ClaimsPrincipal);
                 return RedirectToAction("Index", "Home", new {aria =""});
             }
-
             ViewData["Message"] = "Wrong username or password";
             return View("Index");
-
         }
 
         [Authorize]
@@ -67,9 +64,7 @@ namespace SalePortal.Controllers
         {
             if (ModelState.IsValid)
             {
-                userInput.Password = _library.ToHashPassword(userInput.Password);
-                UserEntity user = _mapper.Map<UserEntity>(userInput);
-                await _library.ToRegisterAUser(user);
+                await _library.ToRegisterAUser(userInput);
                 ViewData["Succeeded"] = "Registration succeeded !!!";
                 return View("Index");
             }

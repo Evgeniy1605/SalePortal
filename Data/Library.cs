@@ -6,14 +6,19 @@ using SalePortal;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 using System.Security.Cryptography;
+using AutoMapper;
+using SalePortal.Models;
+using NuGet.LibraryModel;
 
 namespace SalePortal.Data;
 
 internal  class Library : ILibrary
 {
     private readonly SalePortalDbConnection _context;
-    public Library(SalePortalDbConnection context)
+    private readonly IMapper _mapper;
+    public Library(SalePortalDbConnection context, IMapper mapper)
     {
+        _mapper= mapper;
         _context = context;
     }
     public  int GetUserId(List<Claim> claims)
@@ -23,7 +28,7 @@ internal  class Library : ILibrary
 
     public  ClaimsPrincipal ValidateUserData(string username, string password)
     {
-
+        password = ToHashPassword(password);
         var expectedUser = _context.Users.SingleOrDefault(x => x.Name == username && x.Password == password);
 
         if (expectedUser != null)
@@ -47,16 +52,17 @@ internal  class Library : ILibrary
         }
         
     }
-    public string ToHashPassword(string password)
+    private string ToHashPassword(string password)
     {
         var sha = SHA256.Create();
         var asBiteArray = Encoding.Default.GetBytes(password);
         var hash = sha.ComputeHash(asBiteArray);
         return (Convert.ToBase64String(hash));
     }
-    public async Task<bool> ToRegisterAUser(UserEntity user)
+    public async Task<bool> ToRegisterAUser(UserInputModel inputUser)
     {
-
+        inputUser.Password = ToHashPassword(inputUser.Password);
+        UserEntity user = _mapper.Map<UserEntity>(inputUser);
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
 
