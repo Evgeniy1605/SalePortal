@@ -1,9 +1,11 @@
-﻿<!DOCTYPE html>
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer;
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - SalePortal</title>
+    <title>
+        @ViewData["Title"] - @localizer["Sale Portal"]</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SalePortal.styles.css" asp-append-version="true" />
@@ -30,10 +32,10 @@
 
 
                         <li class="nav-item">
-                            <a class="nav-link pe-3 me-4 fw-bold" href="#">PAGES</a>
+                            <a class="nav-link pe-3 me-4 fw-bold" href="#">@localizer["PAGES"]</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link pe-3 me-4 fw-bold" href="#">BLOG</a>
+                            <a class="nav-link pe-3 me-4 fw-bold" href="#">@localizer["BLOG"]</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link pe-3 me-4 fw-bold" href="#">CONTACT</a>

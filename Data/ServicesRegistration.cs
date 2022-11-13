@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 using SalePortal.DbConnection;
 
@@ -19,6 +20,10 @@ public static class ServicesRegistration
             });
         services.AddAutoMapper(typeof(Program).Assembly);
         services.AddTransient<ILibrary, Library>();
+
+        services.AddLocalization(opt => { opt.ResourcesPath = "Resouces"; });
+        services.AddMvc().AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix).AddDataAnnotationsLocalization();
+
         return services;
     }
 }
