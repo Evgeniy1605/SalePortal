@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Localization;
 using Microsoft.EntityFrameworkCore;
 using SalePortal.DbConnection;
@@ -33,6 +34,18 @@ namespace SalePortal.Controllers
         }
 
 
+        [HttpPost]
+        public IActionResult CultureManagment(string culture, string returnUrl)
+        {
+            Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+                new CookieOptions
+                {
+                    Expires = DateTimeOffset.Now.AddDays(30)
+                });
+            return LocalRedirect(returnUrl);
+
+        }
 
 
     }
