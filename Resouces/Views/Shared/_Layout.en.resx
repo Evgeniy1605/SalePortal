@@ -120,4 +120,7 @@
   <data name="PAGES" xml:space="preserve">
     <value>PAGES</value>
   </data>
+  <data name="what do you need?" xml:space="preserve">
+    <value>What do you need?</value>
+  </data>
 </root>

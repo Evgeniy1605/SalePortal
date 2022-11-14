@@ -120,7 +120,31 @@
   <data name="BLOG" xml:space="preserve">
     <value>БЛОГ</value>
   </data>
+  <data name="Categories" xml:space="preserve">
+    <value>Категорії</value>
+  </data>
+  <data name="CONTACTS" xml:space="preserve">
+    <value>КОНТАКТИ</value>
+  </data>
+  <data name="Hello" xml:space="preserve">
+    <value>Привіт</value>
+  </data>
+  <data name="HOME" xml:space="preserve">
+    <value>ГОЛОВНА СТОРІНКА</value>
+  </data>
+  <data name="Log out" xml:space="preserve">
+    <value>Вийти</value>
+  </data>
+  <data name="PAGES" xml:space="preserve">
+    <value>СТОРІНКИ</value>
+  </data>
   <data name="Sale Portal" xml:space="preserve">
     <value>Платформа голошень</value>
+  </data>
+  <data name="SEARCH" xml:space="preserve">
+    <value>ПОШУК</value>
+  </data>
+  <data name="what do you need?" xml:space="preserve">
+    <value>Що вам потрібно?</value>
   </data>
 </root>
