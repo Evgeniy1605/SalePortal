@@ -29,3 +29,7 @@ body {
 .CommodityBox{
     width: 320px;
 }
+
+.localizationBox{
+    padding-top : 10px;
+}

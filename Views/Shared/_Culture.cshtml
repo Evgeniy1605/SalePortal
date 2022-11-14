@@ -6,7 +6,7 @@
     var returnUrl = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}{Context.Request.QueryString}";
 
 }
-<div>
+<div class="localizationBox">
     <form asp-action="CultureManagment" asp-controller="Home" asp-route-returnUrl="@returnUrl">
         <select name="culture" asp-for="@culture.RequestCulture.UICulture.Name" asp-items="cultureList"
         onchange="this.form.submit();"></select>
