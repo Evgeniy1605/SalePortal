@@ -24,7 +24,6 @@ public static class ServicesRegistration
         services.AddTransient<ILibrary, Library>();
         services.AddLocalization(opt => { opt.ResourcesPath = "Resouces"; });
         services.AddMvc().AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix).AddDataAnnotationsLocalization();
-
         services.Configure<RequestLocalizationOptions>(opt => 
         {
             var suportedCultures = new List<CultureInfo>()
