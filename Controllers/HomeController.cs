@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Localization;
 using Microsoft.EntityFrameworkCore;
-using SalePortal.DbConnection;
+using SalePortal.Data;
 using SalePortal.Models;
 using System.Diagnostics;
 

@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Localization;
 using Microsoft.EntityFrameworkCore;
 using SalePortal.Data;
-using SalePortal.DbConnection;
 using SalePortal.Models;
 using System.Security.Claims;
 

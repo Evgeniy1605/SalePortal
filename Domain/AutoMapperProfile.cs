@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
+using SalePortal.Entities;
 using SalePortal.Models;
 
-namespace SalePortal.Data
+namespace SalePortal.Domain
 {
     public class AutoMapperProfile : Profile
     {
@@ -13,7 +14,7 @@ namespace SalePortal.Data
 
             CreateMap<CommodityEntity, CommodityInputModel>();
             CreateMap<UserInputModel, UserEntity>();
-            
+
         }
     }
 }

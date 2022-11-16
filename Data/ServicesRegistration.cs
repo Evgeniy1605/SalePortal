@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
-using SalePortal.DbConnection;
+using SalePortal.Domain;
 using System.Globalization;
 
 namespace SalePortal.Data;

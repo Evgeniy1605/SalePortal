@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SalePortal.Data
+namespace SalePortal.Entities
 {
     public class CommodityEntity
     {
