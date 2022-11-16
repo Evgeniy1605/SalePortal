@@ -9,6 +9,7 @@ using SalePortal.Data;
 using SalePortal.Models;
 using System.Security.Claims;
 
+
 namespace SalePortal.Controllers
 {
     public class IdentityController : Controller
@@ -17,12 +18,14 @@ namespace SalePortal.Controllers
         private readonly SalePortalDbConnection _context;
         private readonly ILibrary _library;
         private readonly IHtmlLocalizer<IdentityController> _localizer;
+        private readonly IIdentityLibrary _identityLibrary;
 
-        public IdentityController(SalePortalDbConnection context, ILibrary library, IHtmlLocalizer<IdentityController> localizer)
+        public IdentityController(SalePortalDbConnection context, ILibrary library, IHtmlLocalizer<IdentityController> localizer, IIdentityLibrary identityLibrary)
         {
             _localizer = localizer;
             _library = library;
             _context = context;
+            _identityLibrary = identityLibrary;
         }
 
 
@@ -35,7 +38,7 @@ namespace SalePortal.Controllers
         [HttpPost]
         public async Task<IActionResult> ValidateData(string username, string password)
         {
-            var ClaimsPrincipal = _library.ValidateUserData(username, password);
+            var ClaimsPrincipal = _identityLibrary.ValidateUserData(username, password);
             if (ClaimsPrincipal.Identity != null)
             {
                 await HttpContext.SignInAsync(ClaimsPrincipal);
@@ -65,7 +68,7 @@ namespace SalePortal.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _library.ToRegisterAUser(userInput);
+                await _identityLibrary.ToRegisterAUser(userInput);
                 var succeededMessage = _localizer["Registration succeeded !!!"];
                 ViewData["Succeeded"] = succeededMessage;
                 return View("Index");

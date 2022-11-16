@@ -22,6 +22,7 @@ public static class ServicesRegistration
             });
         services.AddAutoMapper(typeof(Program).Assembly);
         services.AddTransient<ILibrary, Library>();
+        services.AddTransient<IIdentityLibrary, IdentityLibrary>();
         services.AddLocalization(opt => { opt.ResourcesPath = "Resouces"; });
         services.AddMvc().AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix).AddDataAnnotationsLocalization();
         services.Configure<RequestLocalizationOptions>(opt => 
