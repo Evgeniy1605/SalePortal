@@ -19,6 +19,7 @@ public static class ServicesRegistration
             .AddCookie(option =>
             {
                 option.LoginPath = "/login";
+                option.AccessDeniedPath = "/denied";
             });
         services.AddAutoMapper(typeof(Program).Assembly);
         services.AddTransient<ILibrary, Library>();

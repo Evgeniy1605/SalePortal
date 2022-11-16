@@ -82,5 +82,8 @@ namespace SalePortal.Controllers
             await HttpContext.SignOutAsync();
             return RedirectToAction("Index", "Home", new { aria = "" });
         }
+
+        [HttpGet("denied")]
+        public IActionResult DeniedPage() { return View(); }
     }
 }
