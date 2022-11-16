@@ -12,8 +12,8 @@ using SalePortal.Data;
 namespace SalePortal.Migrations
 {
     [DbContext(typeof(SalePortalDbConnection))]
-    [Migration("20221101154645_AddedMigration")]
-    partial class AddedMigration
+    [Migration("20221116133104_1")]
+    partial class _1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,7 +24,28 @@ namespace SalePortal.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("SalePortal.Models.CategoryEntity", b =>
+            modelBuilder.Entity("SalePortal.Entities.AdminEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("admins");
+                });
+
+            modelBuilder.Entity("SalePortal.Entities.CategoryEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -41,7 +62,7 @@ namespace SalePortal.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("SalePortal.Models.CommodityEntity", b =>
+            modelBuilder.Entity("SalePortal.Entities.CommodityEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -64,6 +85,9 @@ namespace SalePortal.Migrations
                     b.Property<int>("OwnerId")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<DateTime>("PublicationDate")
                         .HasColumnType("datetime2");
 
@@ -79,7 +103,7 @@ namespace SalePortal.Migrations
                     b.ToTable("commodities");
                 });
 
-            modelBuilder.Entity("SalePortal.Models.UserEntity", b =>
+            modelBuilder.Entity("SalePortal.Entities.UserEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -92,6 +116,10 @@ namespace SalePortal.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -108,15 +136,15 @@ namespace SalePortal.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("SalePortal.Models.CommodityEntity", b =>
+            modelBuilder.Entity("SalePortal.Entities.CommodityEntity", b =>
                 {
-                    b.HasOne("SalePortal.Models.UserEntity", "Owner")
+                    b.HasOne("SalePortal.Entities.UserEntity", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SalePortal.Models.CategoryEntity", "Type")
+                    b.HasOne("SalePortal.Entities.CategoryEntity", "Type")
                         .WithMany()
                         .HasForeignKey("TypeId")
                         .OnDelete(DeleteBehavior.Cascade)
