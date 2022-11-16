@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Localization;
 using Microsoft.EntityFrameworkCore;
 using SalePortal.Data;
 using SalePortal.DbConnection;
@@ -16,9 +17,11 @@ namespace SalePortal.Controllers
 
         private readonly SalePortalDbConnection _context;
         private readonly ILibrary _library;
+        private readonly IHtmlLocalizer<IdentityController> _localizer;
 
-        public IdentityController(SalePortalDbConnection context, ILibrary library)
+        public IdentityController(SalePortalDbConnection context, ILibrary library, IHtmlLocalizer<IdentityController> localizer)
         {
+            _localizer = localizer;
             _library = library;
             _context = context;
         }
@@ -39,7 +42,8 @@ namespace SalePortal.Controllers
                 await HttpContext.SignInAsync(ClaimsPrincipal);
                 return RedirectToAction("Index", "Home", new {aria =""});
             }
-            ViewData["Message"] = "Wrong username or password";
+            var message = _localizer["Wrong username or password!!!"];
+            ViewData["Message"] = message;
             return View("Index");
         }
 
@@ -63,7 +67,8 @@ namespace SalePortal.Controllers
             if (ModelState.IsValid)
             {
                 await _library.ToRegisterAUser(userInput);
-                ViewData["Succeeded"] = "Registration succeeded !!!";
+                var succeededMessage = _localizer["Registration succeeded !!!"];
+                ViewData["Succeeded"] = succeededMessage;
                 return View("Index");
             }
             return View("Error");
