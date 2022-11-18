@@ -117,13 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Books" xml:space="preserve">
-    <value>Books</value>
+  <data name="Admin page" xml:space="preserve">
+    <value>Сторінка адміністратора</value>
   </data>
-  <data name="PAGES" xml:space="preserve">
-    <value>PAGES</value>
+  <data name="Categories" xml:space="preserve">
+    <value>Категорії</value>
   </data>
-  <data name="what do you need?" xml:space="preserve">
-    <value>What do you need?</value>
+  <data name="Users" xml:space="preserve">
+    <value>Користувачі</value>
   </data>
 </root>

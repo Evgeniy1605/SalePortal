@@ -1,4 +1,4 @@
-﻿using SalePortal.Data;
+﻿using SalePortal.Entities;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SalePortal.Models

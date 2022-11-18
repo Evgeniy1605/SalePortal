@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SalePortal.Data;
-using SalePortal.DbConnection;
+
 
 var builder = WebApplication.CreateBuilder(args);
 

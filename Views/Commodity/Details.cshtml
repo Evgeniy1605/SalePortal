@@ -4,7 +4,7 @@
 @{
     string path = "~/Images/" + $"{Model.Id}" + ".png";
     int userid = 0;
-    if (User.Identity.IsAuthenticated)
+    if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
     {
        userid = int.Parse(User.Claims.ToList()[0].ToString().Split(':')[2].Trim());
     }
@@ -48,7 +48,7 @@
         </dd> 
     </dl>
 </div>
-@if (userid == Model.Owner.Id)
+@if (userid == Model.Owner.Id || User.IsInRole("Admin"))
 {
     <div>
         <a asp-action="Edit" class="btn btn btn-success" asp-route-id="@Model?.Id">@localizer["Edit"]</a> |

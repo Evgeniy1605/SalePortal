@@ -1,0 +1,17 @@
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer;
+
+<h1 class="text-center text-black page">@localizer["Admin page"]</h1>
+
+<div>
+    <p>
+        @localizer["Categories"]
+        <a asp-action="Index" asp-controller="Category"><img src="~/icons/edit (1).png" width="50" /></a>
+    </p>
+</div>
+<br />
+<div>
+    <p>
+        @localizer["Users"]
+        <a asp-action="Index" asp-controller="Users"><img src="~/icons/edit (1).png" width="50" /></a>
+    </p>
+</div>

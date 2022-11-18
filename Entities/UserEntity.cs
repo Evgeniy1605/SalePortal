@@ -1,4 +1,4 @@
-﻿namespace SalePortal.Data
+﻿namespace SalePortal.Entities
 {
     public class UserEntity
     {

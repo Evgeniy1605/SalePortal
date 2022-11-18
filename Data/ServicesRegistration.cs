@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
-using SalePortal.DbConnection;
+using SalePortal.Domain;
 using System.Globalization;
 
 namespace SalePortal.Data;
@@ -19,9 +19,11 @@ public static class ServicesRegistration
             .AddCookie(option =>
             {
                 option.LoginPath = "/login";
+                option.AccessDeniedPath = "/denied";
             });
         services.AddAutoMapper(typeof(Program).Assembly);
         services.AddTransient<ILibrary, Library>();
+        services.AddTransient<IIdentityLibrary, IdentityLibrary>();
         services.AddLocalization(opt => { opt.ResourcesPath = "Resouces"; });
         services.AddMvc().AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix).AddDataAnnotationsLocalization();
         services.Configure<RequestLocalizationOptions>(opt => 

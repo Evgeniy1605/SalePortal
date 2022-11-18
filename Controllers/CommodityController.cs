@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SalePortal.Data;
-using SalePortal.DbConnection;
+using SalePortal.Entities;
 using SalePortal.Models;
 
 
@@ -114,9 +114,13 @@ namespace SalePortal.wwwroot
                 .Include(c => c.Owner)
                 .Include(c => c.Type)
                 .FirstOrDefaultAsync(m => m.Id == id);
-
-            int userId = _library.GetUserId(User.Claims.ToList());
-            if (userId != commodityModel.OwnerId)
+            //
+            int userId = 0;
+            if (!User.IsInRole("Admin"))
+            {
+                userId =_library.GetUserId(User.Claims.ToList());
+            }
+            if (userId != commodityModel.OwnerId && !User.IsInRole("Admin"))
             {
                 return View("Error");
             }
@@ -135,6 +139,10 @@ namespace SalePortal.wwwroot
                 _context.commodities.Remove(commodityModel);
             }
             await _context.SaveChangesAsync();
+            if (User.IsInRole("Admin"))
+            {
+                return RedirectToAction("AdminPage", "Identity", new { aria = "" });
+            }
             return RedirectToAction("UserPage", "Identity", new { aria = "" });
         }
 
@@ -152,10 +160,12 @@ namespace SalePortal.wwwroot
             {
                 return NotFound();
             }
-            if (userId != commodityModel.OwnerId)
+            
+            if (userId != commodityModel.OwnerId && !User.IsInRole("Admin"))
             {
                 return BadRequest();
             }
+            
            CommodityInputModel inputModel = _mapper.Map<CommodityInputModel>(commodityModel);
             return View(inputModel);
         }
@@ -180,8 +190,10 @@ namespace SalePortal.wwwroot
 
                 if (ImageExtention == ".png")
                 {
-                    System.IO.File.Delete(entity.Image);
-
+                    if (entity.Image != " ")
+                    {
+                        System.IO.File.Delete(entity.Image);
+                    }  
                     var path = Path.Combine(_environment.WebRootPath, "Images", entity.Id.ToString() + ImageExtention);
                     using (var uploading = new FileStream(path, FileMode.Create))
                     {
@@ -192,6 +204,10 @@ namespace SalePortal.wwwroot
             }
             _context.commodities.Update(entity);
             await _context.SaveChangesAsync();
+            if (User.IsInRole("Admin"))
+            {
+                return RedirectToAction("AdminPage", "Identity", new { aria = "" });
+            }
             return RedirectToAction("UserPage", "Identity", new { aria = "" });
            
         }

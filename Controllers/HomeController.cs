@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Localization;
 using Microsoft.EntityFrameworkCore;
-using SalePortal.DbConnection;
+using SalePortal.Data;
 using SalePortal.Models;
 using System.Diagnostics;
 
@@ -45,6 +45,14 @@ namespace SalePortal.Controllers
                 });
             return LocalRedirect(returnUrl);
 
+        }
+
+
+
+        public async Task<IActionResult> FilterCategory(int id)
+        {
+           var result =  _context.commodities.Where(x => x.TypeId== id);
+            return View("Index", await result.ToListAsync());
         }
 
 
