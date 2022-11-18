@@ -85,5 +85,12 @@ namespace SalePortal.Controllers
 
         [HttpGet("denied")]
         public IActionResult DeniedPage() { return View(); }
+
+
+        [Authorize("Admin")]
+        public IActionResult AdminPage()
+        {
+            return View();
+        }
     }
 }

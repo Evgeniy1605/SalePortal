@@ -26,6 +26,7 @@ public class IdentityLibrary : IIdentityLibrary
     {
         password = ToHashPassword(password);
         var expectedUser = _context.Users.SingleOrDefault(x => x.Name == username && x.Password == password);
+        var expectedAdmin = _context.admins.SingleOrDefault(x => x.Name == username && x.Password == password);
 
         if (expectedUser != null)
         {
@@ -36,11 +37,24 @@ public class IdentityLibrary : IIdentityLibrary
             claims.Add(new Claim("SurName", expectedUser.SurName));
             claims.Add(new Claim("Email", expectedUser.EmailAddress));
             claims.Add(new Claim("PhoneNumber", expectedUser.PhoneNumber));
+            claims.Add(new Claim(ClaimTypes.Role, "User"));
             var ClaimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var ClaimsPrincipal = new ClaimsPrincipal(ClaimsIdentity);
 
             return ClaimsPrincipal;
         }
+        else if (expectedAdmin != null)
+        {
+            var claims = new List<Claim>();
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, expectedAdmin.Id.ToString()));
+            claims.Add(new Claim(ClaimTypes.Name, expectedAdmin.Name));
+            claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+            var ClaimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var ClaimsPrincipal = new ClaimsPrincipal(ClaimsIdentity);
+
+            return ClaimsPrincipal;
+        }
+
         else
         {
             var ClaimsPrincipal = new ClaimsPrincipal();

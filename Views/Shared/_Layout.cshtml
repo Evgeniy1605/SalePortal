@@ -103,10 +103,15 @@
                                 <a asp-action="UserPage" asp-controller="Identity">
                                     <img asp-append-version="true" width="40" src="Icons/user2.png" />
                                 </a>
-                                @if (User.Identity.IsAuthenticated)
+                                @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
                                 {
                                     <h6>@localizer["Hello"]</h6>
                                     <h5>@User.Identity.Name</h5>
+                                    <a asp-controller="Identity" asp-action="LogOut" class="text-black">@localizer["Log out"]</a>
+                                }
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <a class="nav-link text-dark try" asp-controller="" asp-action="">@localizer["Admin Page"]</a>
                                     <a asp-controller="Identity" asp-action="LogOut" class="text-black">@localizer["Log out"]</a>
                                 }
                             </div>
