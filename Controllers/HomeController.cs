@@ -48,5 +48,13 @@ namespace SalePortal.Controllers
         }
 
 
+
+        public async Task<IActionResult> FilterCategory(int id)
+        {
+           var result =  _context.commodities.Where(x => x.TypeId== id);
+            return View("Index", await result.ToListAsync());
+        }
+
+
     }
 }

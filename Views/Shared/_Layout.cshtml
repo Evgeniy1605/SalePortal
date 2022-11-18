@@ -1,4 +1,8 @@
 ﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer;
+@inject SalePortal.Data.SalePortalDbConnection _context;
+@{
+    var categories = _context.Categories.ToList();
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -67,13 +71,10 @@
 
                 <div class="collapse show border" id="collapseExample">
                     <ul class="list-unstyled">
-                        <li><a asp-controller="" asp-action="" class="dropdown-item">Category</a></li>
-                        <li><a asp-controller="" asp-action="" class="dropdown-item">Category</a></li>
-                        <li><a asp-controller="" asp-action="" class="dropdown-item">Category</a></li>
-                        <li><a asp-controller="" asp-action="" class="dropdown-item">Category</a></li>
-                        <li><a asp-controller="" asp-action="" class="dropdown-item">Category</a></li>
-                        <li><a asp-controller="" asp-action="" class="dropdown-item">Category</a></li>
-                        <li><a asp-controller="" asp-action="" class="dropdown-item">Category</a></li>
+                        @foreach (var item in categories)
+                        {
+                            <li><a asp-controller="Home" asp-action="FilterCategory" asp-route-id="@item.Id" class="dropdown-item">@localizer[@item.Name]</a></li>
+                        }
 
 
                     </ul>

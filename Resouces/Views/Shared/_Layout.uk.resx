@@ -123,11 +123,17 @@
   <data name="BLOG" xml:space="preserve">
     <value>БЛОГ</value>
   </data>
+  <data name="Books" xml:space="preserve">
+    <value>Книги</value>
+  </data>
   <data name="Categories" xml:space="preserve">
     <value>Категорії</value>
   </data>
   <data name="CONTACTS" xml:space="preserve">
     <value>КОНТАКТИ</value>
+  </data>
+  <data name="Gadgets" xml:space="preserve">
+    <value>Гаджети</value>
   </data>
   <data name="Hello" xml:space="preserve">
     <value>Привіт</value>
@@ -140,6 +146,9 @@
   </data>
   <data name="PAGES" xml:space="preserve">
     <value>СТОРІНКИ</value>
+  </data>
+  <data name="Pets" xml:space="preserve">
+    <value>Домашні тварини</value>
   </data>
   <data name="Sale Portal" xml:space="preserve">
     <value>Платформа голошень</value>
