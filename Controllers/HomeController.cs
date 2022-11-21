@@ -27,13 +27,15 @@ namespace SalePortal.Controllers
             ViewData["Text"] = text;
             var comodities = await _commodityHttpClient.GetCommoditiesAsync();
             
-            return View( comodities.OrderByDescending(x => x.PublicationDate).ToList());
+            return View(comodities.OrderByDescending(x => x.PublicationDate).ToList());
         }
 
         public async Task<IActionResult> Search(string item)
         {
-            var result = _context.commodities.Where(x => x.Name.Contains(item.ToLower().Trim()));
-            return View("Index", await result.ToListAsync());
+            var comodities = await _commodityHttpClient.GetCommoditiesAsync();
+            //var result = _context.commodities.Where(x => x.Name.Contains(item.ToLower().Trim()));
+            var result = comodities.Where(x => x.Name.Contains(item.ToLower().Trim()));
+            return View("Index", result.ToList());
         }
 
 
