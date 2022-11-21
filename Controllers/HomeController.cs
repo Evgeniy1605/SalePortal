@@ -13,8 +13,10 @@ namespace SalePortal.Controllers
         private readonly SalePortalDbConnection _context;
 
         private readonly IHtmlLocalizer<HomeController> _localizer;
-        public HomeController(SalePortalDbConnection context, IHtmlLocalizer<HomeController> localizer)
+        public readonly ICommodityHttpClient _commodityHttpClient;
+        public HomeController(SalePortalDbConnection context, IHtmlLocalizer<HomeController> localizer, ICommodityHttpClient commodityHttpClient)
         {
+            _commodityHttpClient= commodityHttpClient;
             _context = context;
             _localizer = localizer;
         }
@@ -23,8 +25,9 @@ namespace SalePortal.Controllers
         {
             var text = _localizer["Hello"];
             ViewData["Text"] = text;
-
-            return View(await _context.commodities.OrderByDescending(x => x.PublicationDate).ToListAsync());
+            var comodities = await _commodityHttpClient.GetCommoditiesAsync();
+            
+            return View( comodities.OrderByDescending(x => x.PublicationDate).ToList());
         }
 
         public async Task<IActionResult> Search(string item)
