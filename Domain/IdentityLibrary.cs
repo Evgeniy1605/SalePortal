@@ -24,11 +24,12 @@ public class IdentityLibrary : IIdentityLibrary
         _userHttp = userHttp;
     }
 
-    public ClaimsPrincipal ValidateUserData(string username, string password)
+    public  ClaimsPrincipal ValidateUserData(string username, string password)
     {
         password = ToHashPassword(password);
-        var expectedUser = _context.Users.SingleOrDefault(x => x.Name == username && x.Password == password);
-        
+        //
+        var users =  _userHttp.GetUsers();
+        var expectedUser = users.SingleOrDefault(x => x.Name == username && x.Password == password);
         var expectedAdmin = _context.admins.SingleOrDefault(x => x.Name == username && x.Password == password);
 
         if (expectedUser != null)

@@ -6,5 +6,6 @@ namespace SalePortal.Data
     {
         
         public Task<UserEntity>  GetUserByIdAsync(int id);
+        public List<UserEntity> GetUsers();
     }
 }
