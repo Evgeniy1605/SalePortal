@@ -33,7 +33,6 @@ namespace SalePortal.Controllers
         public async Task<IActionResult> Search(string item)
         {
             var comodities = await _commodityHttpClient.GetCommoditiesAsync();
-            //var result = _context.commodities.Where(x => x.Name.Contains(item.ToLower().Trim()));
             var result = comodities.Where(x => x.Name.Contains(item.ToLower().Trim()));
             return View("Index", result.ToList());
         }

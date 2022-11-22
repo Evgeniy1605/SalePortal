@@ -21,8 +21,10 @@ namespace SalePortal.wwwroot
         private readonly IWebHostEnvironment _environment;
         private readonly IMapper _mapper;
         private readonly ILibrary _library;
-        public CommodityController(SalePortalDbConnection context, IWebHostEnvironment environment, IMapper mapper, ILibrary library)
+        private readonly ICommodityHttpClient _commodityHttpClient;
+        public CommodityController(SalePortalDbConnection context, IWebHostEnvironment environment, IMapper mapper, ILibrary library, ICommodityHttpClient commodityHttpClient)
         {
+            _commodityHttpClient= commodityHttpClient;
             _mapper = mapper;
             _context = context;
             _environment = environment;
@@ -79,8 +81,14 @@ namespace SalePortal.wwwroot
             DateTime dateTime = DateTime.Now;
             commodityModel.PublicationDate = dateTime;
             commodityModel.Image = " ";
+            var IsSucceeded = await _commodityHttpClient.PostCommoditiesAsync(commodityModel, OwnerId);
+            if (IsSucceeded == false)
+            {
+                return View("Error");
+            }
+            /*var y = 0;
             _context.Add(commodityModel);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();*/
 
             if (ImageFile != null)
             {
@@ -88,7 +96,10 @@ namespace SalePortal.wwwroot
 
                 if (ImageExtention == ".png")
                 {
-                    var commodityModelSaved = _context.commodities.SingleOrDefault(x => x == commodityModel);
+
+                    var commodities = await _commodityHttpClient.GetCommoditiesAsync();
+                    var commodityModelSaved = _context.commodities.SingleOrDefault(x => x.PublicationDate == commodityModel.PublicationDate && x.OwnerId == commodityModel.OwnerId);
+
                     var path = Path.Combine(_environment.WebRootPath, "Images", commodityModelSaved.Id.ToString() + ImageExtention);
                     using (var uploading = new FileStream(path, FileMode.Create))
                     {
