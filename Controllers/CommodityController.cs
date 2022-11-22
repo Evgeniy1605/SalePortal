@@ -86,9 +86,6 @@ namespace SalePortal.wwwroot
             {
                 return View("Error");
             }
-            /*var y = 0;
-            _context.Add(commodityModel);
-            await _context.SaveChangesAsync();*/
 
             if (ImageFile != null)
             {

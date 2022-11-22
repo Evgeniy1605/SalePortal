@@ -54,7 +54,6 @@ namespace SalePortal.Domain
             return result;
         }
 
-
         public async Task<bool> PostCommoditiesAsync(CommodityEntity commodity, int userId)
         {
             
