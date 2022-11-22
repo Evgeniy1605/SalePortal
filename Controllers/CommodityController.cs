@@ -158,7 +158,7 @@ namespace SalePortal.wwwroot
             {
                 return NotFound();
             }
-
+            
             var commodityModel = await _context.commodities.FindAsync(id);
             if (commodityModel == null)
             {
@@ -183,8 +183,19 @@ namespace SalePortal.wwwroot
             {
                 return NotFound();
             }
+  
+            var entity = await _commodityHttpClient.GetCommodityByIdAsync(id);
+            //
+            int userId = 0;
+            if (!User.IsInRole("Admin"))
+            {
+                userId = _library.GetUserId(User.Claims.ToList());
+            }
+            if (userId != entity.OwnerId && !User.IsInRole("Admin"))
+            {
+                return View("Error");
+            }
 
-            var entity = await _context.commodities.SingleOrDefaultAsync(x => x.Id == id);
             entity.Description = inputModel.Description;
             entity.Name = inputModel.Name.ToLower().Trim();
             entity.Price = inputModel.Price;
@@ -206,8 +217,9 @@ namespace SalePortal.wwwroot
                     }
                 }
             }
-            _context.commodities.Update(entity);
-            await _context.SaveChangesAsync();
+            var IsPullSucceeded = await _commodityHttpClient.PutCommodityAsync(entity.Id, userId, entity);
+            if (IsPullSucceeded == false) { return View("Error"); };
+            
             if (User.IsInRole("Admin"))
             {
                 return RedirectToAction("AdminPage", "Identity", new { aria = "" });

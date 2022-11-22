@@ -171,6 +171,50 @@ namespace SalePortal.Domain
             }
             finally { client.Dispose(); };
         }
+
+        public async Task<bool> PutCommodityAsync(int commodityId, int userId, CommodityEntity commodity)
+        {
+            var owner = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId);
+            var type = await _context.Categories.SingleOrDefaultAsync(x => x.Id == commodity.TypeId);
+
+            if (owner == null || type == null)
+            {
+                return false;
+            }
+
+            commodity.Owner = owner;
+            commodity.Type = type;
+            var postJson = JsonConvert.SerializeObject(commodity);
+            var content = new StringContent(postJson, Encoding.UTF8, "application/json");
+
+            var client = new HttpClient();
+            var uri = new Uri(Uri + "/" + commodityId.ToString());
+            try
+            {
+                var reqest = new HttpRequestMessage()
+                {
+                    Method = HttpMethod.Put,
+                    RequestUri = uri,
+                    Content = content,
+                    Headers =
+                {
+                    {"ApiKey", Key }
+                }
+                };
+                using (var response = await client.SendAsync(reqest))
+                {
+                    response.EnsureSuccessStatusCode();
+                }
+                return true;
+
+            }
+            catch (Exception)
+            {
+
+                return false;
+            }
+            throw new NotImplementedException();
+        }
     }
-    }
+}
 
