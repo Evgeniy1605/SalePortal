@@ -12,9 +12,11 @@ namespace SalePortal.Domain
         private const string Key = "pgHlpp7QzFasHJx4w46fI5Uzi4RvtTwlEXpsarwrsf8872dsd";
         private readonly SalePortalDbConnection _context;
         private const string Uri = "https://localhost:7165/api/Commodities";
-        public CommodityHttpClient(SalePortalDbConnection context)
+        private readonly IUserHttpClient _userHttp;
+        public CommodityHttpClient(SalePortalDbConnection context, IUserHttpClient userHttp)
         {
-            _context= context;
+            _context = context;
+            _userHttp = userHttp;
         }
         public  async Task<List<CommodityEntity>> GetCommoditiesAsync()
         {
@@ -57,7 +59,7 @@ namespace SalePortal.Domain
         public async Task<bool> PostCommoditiesAsync(CommodityEntity commodity, int userId)
         {
             
-            var owner = await _context.Users.SingleOrDefaultAsync(x => x.Id== userId);
+            var owner = await _userHttp.GetUserByIdAsync(userId);
             var type = await _context.Categories.SingleOrDefaultAsync(x => x.Id == commodity.TypeId);
 
             if (owner == null || type == null )

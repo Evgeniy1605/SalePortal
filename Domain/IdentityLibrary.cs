@@ -16,16 +16,19 @@ public class IdentityLibrary : IIdentityLibrary
 {
     private readonly SalePortalDbConnection _context;
     private readonly IMapper _mapper;
-    public IdentityLibrary(SalePortalDbConnection context, IMapper mapper)
+    private readonly IUserHttpClient _userHttp;
+    public IdentityLibrary(SalePortalDbConnection context, IMapper mapper, IUserHttpClient userHttp)
     {
         _context = context;
         _mapper = mapper;
+        _userHttp = userHttp;
     }
 
     public ClaimsPrincipal ValidateUserData(string username, string password)
     {
         password = ToHashPassword(password);
         var expectedUser = _context.Users.SingleOrDefault(x => x.Name == username && x.Password == password);
+        
         var expectedAdmin = _context.admins.SingleOrDefault(x => x.Name == username && x.Password == password);
 
         if (expectedUser != null)
