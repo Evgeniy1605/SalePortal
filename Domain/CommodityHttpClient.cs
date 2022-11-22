@@ -107,7 +107,70 @@ namespace SalePortal.Domain
             
             
         }
-            
+
+        public async Task<bool> DeleteCommodityAsync(int CommodityId)
+        {
+            var client = new HttpClient();
+            var uri = new Uri(Uri + "/" + CommodityId.ToString());
+
+            try
+            {
+                var reqest = new HttpRequestMessage()
+                {
+                    Method = HttpMethod.Delete,
+                    RequestUri = uri,
+
+                    Headers =
+                {
+                    {"ApiKey", Key }
+                }
+                };
+                using (var response = await client.SendAsync(reqest))
+                {
+                    response.EnsureSuccessStatusCode();
+
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            finally { client.Dispose(); }
         }
+
+        public async Task<CommodityEntity> GetCommodityByIdAsync(int? id)
+        {
+            string json;
+            var client = new HttpClient();
+            CommodityEntity result;
+            try
+            {
+                var reqest = new HttpRequestMessage()
+                {
+                    Method = HttpMethod.Get,
+                    RequestUri = new Uri(Uri + "/" + id.ToString()),
+                    Headers =
+                {
+                    { "ApiKey", Key }
+                }
+                };
+
+                using (var response = await client.SendAsync(reqest))
+                {
+                    response.EnsureSuccessStatusCode();
+                    json = await response.Content.ReadAsStringAsync();
+                }
+                result = JsonConvert.DeserializeObject<CommodityEntity>(json);
+                return result;
+            }
+            catch (Exception)
+            {
+                result = new CommodityEntity();
+                return result;
+            }
+            finally { client.Dispose(); };
+        }
+    }
     }
 

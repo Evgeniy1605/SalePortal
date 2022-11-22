@@ -113,16 +113,12 @@ namespace SalePortal.wwwroot
         [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.commodities == null)
+            if (id == null )
             {
                 return NotFound();
             }
 
-            var commodityModel = await _context.commodities
-                .Include(c => c.Owner)
-                .Include(c => c.Type)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            //
+            var commodityModel = await _commodityHttpClient.GetCommodityByIdAsync(id);
             int userId = 0;
             if (!User.IsInRole("Admin"))
             {
@@ -136,17 +132,17 @@ namespace SalePortal.wwwroot
             {
                 return NotFound();
             }
-            commodityModel = await _context.commodities.FindAsync(id);
-            
+
             if (commodityModel != null)
             {
                 if (commodityModel.Image !=" ")
                 {
                     System.IO.File.Delete(commodityModel.Image);
                 }
-                _context.commodities.Remove(commodityModel);
+                var IsRemovalSucceeded = await _commodityHttpClient.DeleteCommodityAsync(commodityModel.Id);
+                if(IsRemovalSucceeded == false) { return NotFound(); }
             }
-            await _context.SaveChangesAsync();
+
             if (User.IsInRole("Admin"))
             {
                 return RedirectToAction("AdminPage", "Identity", new { aria = "" });
