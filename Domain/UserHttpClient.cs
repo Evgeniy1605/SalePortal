@@ -80,7 +80,6 @@ public class UserHttpClient : IUserHttpClient
         }
         return result;
     }
-
     public async Task PostUserAsync(UserEntity user)
     {
         var postJson = JsonConvert.SerializeObject(user);
@@ -116,6 +115,8 @@ public class UserHttpClient : IUserHttpClient
             client.Dispose();
         }
     }
+
+
 }
 
 
