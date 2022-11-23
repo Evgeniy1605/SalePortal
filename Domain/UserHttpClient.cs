@@ -1,6 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SalePortal.Data;
 using SalePortal.Entities;
+using System.Text;
 
 namespace SalePortal.Domain;
 
@@ -40,8 +42,6 @@ public class UserHttpClient : IUserHttpClient
         }
         finally { client.Dispose(); };
     }
-
-
     public  List<UserEntity> GetUsers()
     {
         string json;
@@ -79,6 +79,42 @@ public class UserHttpClient : IUserHttpClient
             client.Dispose();
         }
         return result;
+    }
+
+    public async Task PostUserAsync(UserEntity user)
+    {
+        var postJson = JsonConvert.SerializeObject(user);
+        var content = new StringContent(postJson, Encoding.UTF8, "application/json");
+
+        var client = new HttpClient();
+        var uri = new Uri(Uri);
+        try
+        {
+            var reqest = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Post,
+                RequestUri = uri,
+                Content = content,
+                Headers =
+                {
+                    {"ApiKey", Key }
+                }
+            };
+            using (var response = await client.SendAsync(reqest))
+            {
+                response.EnsureSuccessStatusCode();
+
+            }
+
+        }
+        catch (Exception)
+        {
+
+        }
+        finally
+        {
+            client.Dispose();
+        }
     }
 }
 

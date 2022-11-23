@@ -105,9 +105,7 @@ namespace SalePortal.Domain
                 client.Dispose();
             }
 
-            
-            
-            
+              
         }
 
         public async Task<bool> DeleteCommodityAsync(int CommodityId)
