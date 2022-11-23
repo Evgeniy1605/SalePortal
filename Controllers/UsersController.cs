@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using SalePortal.Data;
 using SalePortal.Entities;
 
-namespace SalePortal.Views.Commodity
+namespace SalePortal.Controllers
 {
     public class UsersController : Controller
     {
@@ -26,7 +26,7 @@ namespace SalePortal.Views.Commodity
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
-              return View(await _context.Users.ToListAsync());
+            return View(await _context.Users.ToListAsync());
         }
 
         [Authorize(Roles = "Admin")]
@@ -158,7 +158,7 @@ namespace SalePortal.Views.Commodity
 
         private bool UserEntityExists(int id)
         {
-          return _context.Users.Any(e => e.Id == id);
+            return _context.Users.Any(e => e.Id == id);
         }
     }
 }
