@@ -10,6 +10,7 @@ public class UserHttpClient : IUserHttpClient
 {
     private const string Key = "pgHlpp7QzFasHJx4w46fI5Uzi4RvtTwlEXpsarwrsf8872dsd";
     private const string Uri = "https://localhost:7165/api/User";
+
     public async Task<UserEntity> GetUserByIdAsync(int id)
     {
         string json;
@@ -114,6 +115,37 @@ public class UserHttpClient : IUserHttpClient
         {
             client.Dispose();
         }
+    }
+
+    public async Task<bool> DeleteUserAsync(int userId)
+    {
+        var client = new HttpClient();
+        var uri = new Uri(Uri + "/" + userId.ToString());
+
+        try
+        {
+            var reqest = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Delete,
+                RequestUri = uri,
+
+                Headers =
+                {
+                    {"ApiKey", Key }
+                }
+            };
+            using (var response = await client.SendAsync(reqest))
+            {
+                response.EnsureSuccessStatusCode();
+
+            }
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+        finally { client.Dispose(); }
     }
 
 

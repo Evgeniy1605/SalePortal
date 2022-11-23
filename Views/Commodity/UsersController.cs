@@ -15,10 +15,12 @@ namespace SalePortal.Views.Commodity
     public class UsersController : Controller
     {
         private readonly SalePortalDbConnection _context;
+        private readonly IUserHttpClient _userHttp;
 
-        public UsersController(SalePortalDbConnection context)
+        public UsersController(SalePortalDbConnection context, IUserHttpClient userHttp)
         {
             _context = context;
+            _userHttp = userHttp;
         }
 
         [Authorize(Roles = "Admin")]
@@ -141,13 +143,16 @@ namespace SalePortal.Views.Commodity
             {
                 return Problem("Entity set 'SalePortalDbConnection.Users'  is null.");
             }
-            var userEntity = await _context.Users.FindAsync(id);
+            var userEntity = await _userHttp.GetUserByIdAsync(id);
+            bool IsDeleted = false;
             if (userEntity != null)
             {
-                _context.Users.Remove(userEntity);
+                IsDeleted = await _userHttp.DeleteUserAsync(id);
             }
-            
-            await _context.SaveChangesAsync();
+            if (IsDeleted == false)
+            {
+                return View("Error");
+            }
             return RedirectToAction(nameof(Index));
         }
 
