@@ -60,8 +60,6 @@ namespace SalePortal.Controllers
             bool IsPostSecseeded = false;
             if (ModelState.IsValid)
             {
-                /*_context.Add(categoryEntity);
-                await _context.SaveChangesAsync();*/
                 IsPostSecseeded = await _category.PostCategoryAsync(categoryEntity);
                 if (IsPostSecseeded == true)
                 {
