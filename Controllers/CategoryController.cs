@@ -14,12 +14,11 @@ namespace SalePortal.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly SalePortalDbConnection _context;
         private readonly ICategoryHttpClient _category;
 
-        public CategoryController(SalePortalDbConnection context, ICategoryHttpClient category)
+        public CategoryController(ICategoryHttpClient category)
         {
-            _context = context;
+
             _category = category;
         }
 
@@ -33,7 +32,7 @@ namespace SalePortal.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int id)
         {
-            if (id == null || _context.Categories == null)
+            if (id == null )
             {
                 return NotFound();
             }
@@ -74,12 +73,11 @@ namespace SalePortal.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id)
         {
-            if (id == null || _context.Categories == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            //var categoryEntity = await _context.Categories.FindAsync(id);
             var categoryEntity = await _category.GetCategoryByIdAsync(id);
             if (categoryEntity == null)
             {
@@ -107,14 +105,7 @@ namespace SalePortal.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CategoryEntityExists(categoryEntity.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    
                 }
                 if (IsPullSucceeded == false) { return View("Error"); };
                 return RedirectToAction(nameof(Index));
@@ -125,7 +116,7 @@ namespace SalePortal.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
-            if (id == null || _context.Categories == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -145,7 +136,7 @@ namespace SalePortal.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Categories == null)
+            if ( await _category.GetCategoriesAsync() == null)
             {
                 return Problem("Entity set 'SalePortalDbConnection.Categories'  is null.");
             }
@@ -159,9 +150,5 @@ namespace SalePortal.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CategoryEntityExists(int id)
-        {
-          return _context.Categories.Any(e => e.Id == id);
-        }
     }
 }
