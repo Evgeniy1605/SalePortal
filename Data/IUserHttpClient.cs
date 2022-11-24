@@ -9,5 +9,6 @@ namespace SalePortal.Data
         public List<UserEntity> GetUsers();
         public Task PostUserAsync(UserEntity user);
         public Task<bool> DeleteUserAsync(int userId);
+        public Task<bool> PutUserAsync(int userId, UserEntity user);
     }
 }

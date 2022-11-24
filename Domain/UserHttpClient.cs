@@ -148,7 +148,42 @@ public class UserHttpClient : IUserHttpClient
         finally { client.Dispose(); }
     }
 
+    public async Task<bool> PutUserAsync(int userId, UserEntity user)
+    {
+        var postJson = JsonConvert.SerializeObject(user);
+        var content = new StringContent(postJson, Encoding.UTF8, "application/json");
 
+        var client = new HttpClient();
+        var uri = new Uri(Uri + "/" + userId.ToString());
+        try
+        {
+            var reqest = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Put,
+                RequestUri = uri,
+                Content = content,
+                Headers =
+                {
+                    {"ApiKey", Key }
+                }
+            };
+            using (var response = await client.SendAsync(reqest))
+            {
+                response.EnsureSuccessStatusCode();
+            }
+            return true;
+
+        }
+        catch (Exception)
+        {
+
+            return false;
+        }
+        finally
+        {
+            client.Dispose();
+        }
+    }
 }
 
 

@@ -213,7 +213,10 @@ namespace SalePortal.Domain
 
                 return false;
             }
-            throw new NotImplementedException();
+            finally
+            {
+                client.Dispose();
+            }
         }
     }
 }

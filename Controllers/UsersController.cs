@@ -95,10 +95,10 @@ namespace SalePortal.Controllers
 
             if (ModelState.IsValid)
             {
+                bool IsPullSucceeded = false;
                 try
                 {
-                    _context.Update(userEntity);
-                    await _context.SaveChangesAsync();
+                    IsPullSucceeded = await _userHttp.PutUserAsync(id, userEntity);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -110,6 +110,10 @@ namespace SalePortal.Controllers
                     {
                         throw;
                     }
+                }
+                if (IsPullSucceeded == false)
+                {
+                    return View("Error");
                 }
                 return RedirectToAction(nameof(Index));
             }
