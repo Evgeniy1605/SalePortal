@@ -36,22 +36,24 @@ namespace SalePortal.wwwroot
         [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Index()
         {
-            var salePortalDbConnection = _context.commodities.Include(c => c.Owner).Include(c => c.Type);
-            return View(await salePortalDbConnection.ToListAsync());
+
+            var salePortalDbConnection = await _commodityHttpClient.GetCommoditiesAsync();
+            return View(salePortalDbConnection);
         }
 
 
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null || _context.commodities == null)
+            if (id == null || await _commodityHttpClient.GetCommoditiesAsync() == null)
             {
                 return NotFound();
             }
 
-            var commodityModel = await _context.commodities
+            /*var commodityModel = await _context.commodities
                 .Include(c => c.Owner)
                 .Include(c => c.Type)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == id);*/
+            var commodityModel = await _commodityHttpClient.GetCommodityByIdAsync(id);
             if (commodityModel == null)
             {
                 return NotFound();
@@ -65,6 +67,7 @@ namespace SalePortal.wwwroot
         public IActionResult Create()
         {
             ViewData["TypeId"] = new SelectList(_context.Categories, "Id", "Name");
+
             return View();
         }
 
@@ -151,15 +154,15 @@ namespace SalePortal.wwwroot
         }
 
         [Authorize]
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
             int userId = _library.GetUserId(User.Claims.ToList());
-            if (id == null || _context.commodities == null)
+            if (id == null || await _commodityHttpClient.GetCommoditiesAsync() == null)
             {
                 return NotFound();
             }
             
-            var commodityModel = await _context.commodities.FindAsync(id);
+            var commodityModel = await _commodityHttpClient.GetCommodityByIdAsync(id);
             if (commodityModel == null)
             {
                 return NotFound();
