@@ -26,21 +26,21 @@ namespace SalePortal.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
-            //return View(await _context.Categories.ToListAsync());
             var categories = await _category.GetCategoriesAsync();
             return View(categories);
         }
 
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
             if (id == null || _context.Categories == null)
             {
                 return NotFound();
             }
 
-            var categoryEntity = await _context.Categories
-                .FirstOrDefaultAsync(m => m.Id == id);
+            /*var categoryEntity = await _context.Categories
+                .FirstOrDefaultAsync(m => m.Id == id);*/
+            var categoryEntity = await _category.GetCategoryByIdAsync(id);
             if (categoryEntity == null)
             {
                 return NotFound();

@@ -52,9 +52,37 @@ namespace SalePortal.Domain
 
         }
 
-        public Task<CategoryEntity> GetCategoryByIdAsync(int id)
+        public async Task<CategoryEntity> GetCategoryByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            string json;
+            var client = new HttpClient();
+            CategoryEntity result;
+            try
+            {
+                var reqest = new HttpRequestMessage()
+                {
+                    Method = HttpMethod.Get,
+                    RequestUri = new Uri(Uri + "/" + id.ToString()),
+                    Headers =
+                {
+                    { "ApiKey", Key }
+                }
+                };
+
+                using (var response = await client.SendAsync(reqest))
+                {
+                    response.EnsureSuccessStatusCode();
+                    json = await response.Content.ReadAsStringAsync();
+                }
+                result = JsonConvert.DeserializeObject<CategoryEntity>(json);
+                return result;
+            }
+            catch (Exception)
+            {
+                result = new CategoryEntity();
+                return result;
+            }
+            finally { client.Dispose(); };
         }
 
         public Task PostCategoryAsync(CategoryEntity category)
