@@ -37,9 +37,6 @@ namespace SalePortal.Controllers
             {
                 return NotFound();
             }
-
-            /*var categoryEntity = await _context.Categories
-                .FirstOrDefaultAsync(m => m.Id == id);*/
             var categoryEntity = await _category.GetCategoryByIdAsync(id);
             if (categoryEntity == null)
             {
@@ -60,14 +57,21 @@ namespace SalePortal.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] CategoryEntity categoryEntity)
         {
+            bool IsPostSecseeded = false;
             if (ModelState.IsValid)
             {
-                _context.Add(categoryEntity);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                /*_context.Add(categoryEntity);
+                await _context.SaveChangesAsync();*/
+                IsPostSecseeded = await _category.PostCategoryAsync(categoryEntity);
+                if (IsPostSecseeded == true)
+                {
+                    return RedirectToAction(nameof(Index));
+                }        
             }
             return View(categoryEntity);
         }
+
+
 
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)

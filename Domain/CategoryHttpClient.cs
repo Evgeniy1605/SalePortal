@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using SalePortal.Data;
 using SalePortal.Entities;
+using System.Text;
 
 namespace SalePortal.Domain
 {
@@ -85,9 +86,41 @@ namespace SalePortal.Domain
             finally { client.Dispose(); };
         }
 
-        public Task PostCategoryAsync(CategoryEntity category)
+        public async Task<bool> PostCategoryAsync(CategoryEntity category)
         {
-            throw new NotImplementedException();
+            var postJson = JsonConvert.SerializeObject(category);
+            var content = new StringContent(postJson, Encoding.UTF8, "application/json");
+
+            var client = new HttpClient();
+            var uri = new Uri(Uri);
+            try
+            {
+                var reqest = new HttpRequestMessage()
+                {
+                    Method = HttpMethod.Post,
+                    RequestUri = uri,
+                    Content = content,
+                    Headers =
+                {
+                    {"ApiKey", Key }
+                }
+                };
+                using (var response = await client.SendAsync(reqest))
+                {
+                    response.EnsureSuccessStatusCode();
+
+                }
+                return true;
+
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            finally
+            {
+                client.Dispose();
+            }
         }
 
         public Task<bool> PutCategoryAsync(int categoryId, CategoryEntity category)
