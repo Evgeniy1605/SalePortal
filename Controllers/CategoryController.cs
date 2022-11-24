@@ -15,16 +15,20 @@ namespace SalePortal.Controllers
     public class CategoryController : Controller
     {
         private readonly SalePortalDbConnection _context;
+        private readonly ICategoryHttpClient _category;
 
-        public CategoryController(SalePortalDbConnection context)
+        public CategoryController(SalePortalDbConnection context, ICategoryHttpClient category)
         {
             _context = context;
+            _category = category;
         }
 
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Categories.ToListAsync());
+            //return View(await _context.Categories.ToListAsync());
+            var categories = await _category.GetCategoriesAsync();
+            return View(categories);
         }
 
         [Authorize(Roles = "Admin")]
