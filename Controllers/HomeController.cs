@@ -10,14 +10,13 @@ namespace SalePortal.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly SalePortalDbConnection _context;
+
 
         private readonly IHtmlLocalizer<HomeController> _localizer;
         public readonly ICommodityHttpClient _commodityHttpClient;
-        public HomeController(SalePortalDbConnection context, IHtmlLocalizer<HomeController> localizer, ICommodityHttpClient commodityHttpClient)
+        public HomeController(IHtmlLocalizer<HomeController> localizer, ICommodityHttpClient commodityHttpClient)
         {
             _commodityHttpClient= commodityHttpClient;
-            _context = context;
             _localizer = localizer;
         }
 
@@ -51,14 +50,12 @@ namespace SalePortal.Controllers
 
         }
 
-
-
         public async Task<IActionResult> FilterCategory(int id)
         {
-           var result =  _context.commodities.Where(x => x.TypeId== id);
-            return View("Index", await result.ToListAsync());
+            var commotities = await _commodityHttpClient.GetCommoditiesAsync();
+            var result = commotities.Where(x => x.TypeId == id).ToList();
+            return View("Index",  result);
         }
-
 
     }
 }
