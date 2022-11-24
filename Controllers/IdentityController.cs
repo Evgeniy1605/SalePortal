@@ -15,17 +15,17 @@ namespace SalePortal.Controllers
     public class IdentityController : Controller
     {
 
-        private readonly SalePortalDbConnection _context;
+        
         private readonly ILibrary _library;
         private readonly IHtmlLocalizer<IdentityController> _localizer;
         private readonly IIdentityLibrary _identityLibrary;
-
-        public IdentityController(SalePortalDbConnection context, ILibrary library, IHtmlLocalizer<IdentityController> localizer, IIdentityLibrary identityLibrary)
+        private readonly ICommodityHttpClient _commodityHttpClient;
+        public IdentityController(ILibrary library, IHtmlLocalizer<IdentityController> localizer, IIdentityLibrary identityLibrary, ICommodityHttpClient commodityHttpClient)
         {
             _localizer = localizer;
             _library = library;
-            _context = context;
             _identityLibrary = identityLibrary;
+            _commodityHttpClient = commodityHttpClient;
         }
 
 
@@ -53,8 +53,8 @@ namespace SalePortal.Controllers
         public async Task<IActionResult> UserPage()
         {
             int userId = _library.GetUserId(User.Claims.ToList());
-            var ads = _context.commodities.Where(x => x.OwnerId == userId);
-            return View(await ads.ToListAsync());
+            var ads = await _commodityHttpClient.GetCommoditiesAsync();
+            return View(ads.Where(x => x.OwnerId == userId).ToList());
         }
 
         public IActionResult Registration()
