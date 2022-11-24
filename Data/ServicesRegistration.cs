@@ -22,6 +22,7 @@ public static class ServicesRegistration
                 option.AccessDeniedPath = "/denied";
             });
         services.AddAutoMapper(typeof(Program).Assembly);
+        services.AddTransient<ICategoryHttpClient,CategoryHttpClient>();
         services.AddTransient<ILibrary, Library>();
         services.AddTransient<IIdentityLibrary, IdentityLibrary>();
         services.AddTransient<IUserHttpClient, UserHttpClient>();
