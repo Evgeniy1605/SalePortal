@@ -9,9 +9,35 @@ namespace SalePortal.Domain
     {
         private const string Key = "pgHlpp7QzFasHJx4w46fI5Uzi4RvtTwlEXpsarwrsf8872dsd";
         private const string Uri = "https://localhost:7165/api/Categories";
-        public Task<bool> DeleteCategoryAsync(int categoryId)
+        public async Task<bool> DeleteCategoryAsync(int categoryId)
         {
-            throw new NotImplementedException();
+            var client = new HttpClient();
+            var uri = new Uri(Uri + "/" + categoryId.ToString());
+
+            try
+            {
+                var reqest = new HttpRequestMessage()
+                {
+                    Method = HttpMethod.Delete,
+                    RequestUri = uri,
+
+                    Headers =
+                {
+                    {"ApiKey", Key }
+                }
+                };
+                using (var response = await client.SendAsync(reqest))
+                {
+                    response.EnsureSuccessStatusCode();
+
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            finally { client.Dispose(); }
         }
 
         public async Task<List<CategoryEntity>> GetCategoriesAsync()

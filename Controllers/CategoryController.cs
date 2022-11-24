@@ -123,15 +123,15 @@ namespace SalePortal.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
             if (id == null || _context.Categories == null)
             {
                 return NotFound();
             }
 
-            var categoryEntity = await _context.Categories
-                .FirstOrDefaultAsync(m => m.Id == id);
+
+            var categoryEntity = await _category.GetCategoryByIdAsync(id);
             if (categoryEntity == null)
             {
                 return NotFound();
@@ -149,13 +149,13 @@ namespace SalePortal.Controllers
             {
                 return Problem("Entity set 'SalePortalDbConnection.Categories'  is null.");
             }
-            var categoryEntity = await _context.Categories.FindAsync(id);
+            bool IsDeleted = false;
+            var categoryEntity = await _category.GetCategoryByIdAsync(id);
             if (categoryEntity != null)
             {
-                _context.Categories.Remove(categoryEntity);
+                IsDeleted = await _category.DeleteCategoryAsync(id);
             }
-            
-            await _context.SaveChangesAsync();
+            if(IsDeleted == false) { return View("Error"); };
             return RedirectToAction(nameof(Index));
         }
 
