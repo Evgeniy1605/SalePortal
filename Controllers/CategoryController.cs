@@ -72,14 +72,15 @@ namespace SalePortal.Controllers
 
 
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
             if (id == null || _context.Categories == null)
             {
                 return NotFound();
             }
 
-            var categoryEntity = await _context.Categories.FindAsync(id);
+            //var categoryEntity = await _context.Categories.FindAsync(id);
+            var categoryEntity = await _category.GetCategoryByIdAsync(id);
             if (categoryEntity == null)
             {
                 return NotFound();
@@ -99,10 +100,10 @@ namespace SalePortal.Controllers
 
             if (ModelState.IsValid)
             {
+                bool IsPullSucceeded = false;
                 try
                 {
-                    _context.Update(categoryEntity);
-                    await _context.SaveChangesAsync();
+                    IsPullSucceeded = await _category.PutCategoryAsync(id,categoryEntity);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -115,6 +116,7 @@ namespace SalePortal.Controllers
                         throw;
                     }
                 }
+                if (IsPullSucceeded == false) { return View("Error"); };
                 return RedirectToAction(nameof(Index));
             }
             return View(categoryEntity);

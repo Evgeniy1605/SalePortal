@@ -123,9 +123,41 @@ namespace SalePortal.Domain
             }
         }
 
-        public Task<bool> PutCategoryAsync(int categoryId, CategoryEntity category)
+        public async Task<bool> PutCategoryAsync(int categoryId, CategoryEntity category)
         {
-            throw new NotImplementedException();
+            var postJson = JsonConvert.SerializeObject(category);
+            var content = new StringContent(postJson, Encoding.UTF8, "application/json");
+
+            var client = new HttpClient();
+            var uri = new Uri(Uri + "/" + categoryId.ToString());
+            try
+            {
+                var reqest = new HttpRequestMessage()
+                {
+                    Method = HttpMethod.Put,
+                    RequestUri = uri,
+                    Content = content,
+                    Headers =
+                {
+                    {"ApiKey", Key }
+                }
+                };
+                using (var response = await client.SendAsync(reqest))
+                {
+                    response.EnsureSuccessStatusCode();
+                }
+                return true;
+
+            }
+            catch (Exception)
+            {
+
+                return false;
+            }
+            finally
+            {
+                client.Dispose();
+            }
         }
     }
 }
