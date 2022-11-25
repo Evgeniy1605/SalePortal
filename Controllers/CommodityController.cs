@@ -21,8 +21,10 @@ namespace SalePortal.wwwroot
         private readonly IWebHostEnvironment _environment;
         private readonly IMapper _mapper;
         private readonly ILibrary _library;
-        public CommodityController(SalePortalDbConnection context, IWebHostEnvironment environment, IMapper mapper, ILibrary library)
+        private readonly ICommodityHttpClient _commodityHttpClient;
+        public CommodityController(SalePortalDbConnection context, IWebHostEnvironment environment, IMapper mapper, ILibrary library, ICommodityHttpClient commodityHttpClient)
         {
+            _commodityHttpClient= commodityHttpClient;
             _mapper = mapper;
             _context = context;
             _environment = environment;
@@ -34,22 +36,24 @@ namespace SalePortal.wwwroot
         [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Index()
         {
-            var salePortalDbConnection = _context.commodities.Include(c => c.Owner).Include(c => c.Type);
-            return View(await salePortalDbConnection.ToListAsync());
+
+            var salePortalDbConnection = await _commodityHttpClient.GetCommoditiesAsync();
+            return View(salePortalDbConnection);
         }
 
 
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null || _context.commodities == null)
+            if (id == null || await _commodityHttpClient.GetCommoditiesAsync() == null)
             {
                 return NotFound();
             }
 
-            var commodityModel = await _context.commodities
+            /*var commodityModel = await _context.commodities
                 .Include(c => c.Owner)
                 .Include(c => c.Type)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == id);*/
+            var commodityModel = await _commodityHttpClient.GetCommodityByIdAsync(id);
             if (commodityModel == null)
             {
                 return NotFound();
@@ -63,6 +67,7 @@ namespace SalePortal.wwwroot
         public IActionResult Create()
         {
             ViewData["TypeId"] = new SelectList(_context.Categories, "Id", "Name");
+
             return View();
         }
 
@@ -79,8 +84,11 @@ namespace SalePortal.wwwroot
             DateTime dateTime = DateTime.Now;
             commodityModel.PublicationDate = dateTime;
             commodityModel.Image = " ";
-            _context.Add(commodityModel);
-            await _context.SaveChangesAsync();
+            var IsSucceeded = await _commodityHttpClient.PostCommoditiesAsync(commodityModel, OwnerId);
+            if (IsSucceeded == false)
+            {
+                return View("Error");
+            }
 
             if (ImageFile != null)
             {
@@ -88,7 +96,10 @@ namespace SalePortal.wwwroot
 
                 if (ImageExtention == ".png")
                 {
-                    var commodityModelSaved = _context.commodities.SingleOrDefault(x => x == commodityModel);
+
+                    var commodities = await _commodityHttpClient.GetCommoditiesAsync();
+                    var commodityModelSaved = _context.commodities.SingleOrDefault(x => x.PublicationDate == commodityModel.PublicationDate && x.OwnerId == commodityModel.OwnerId);
+
                     var path = Path.Combine(_environment.WebRootPath, "Images", commodityModelSaved.Id.ToString() + ImageExtention);
                     using (var uploading = new FileStream(path, FileMode.Create))
                     {
@@ -105,16 +116,12 @@ namespace SalePortal.wwwroot
         [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.commodities == null)
+            if (id == null )
             {
                 return NotFound();
             }
 
-            var commodityModel = await _context.commodities
-                .Include(c => c.Owner)
-                .Include(c => c.Type)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            //
+            var commodityModel = await _commodityHttpClient.GetCommodityByIdAsync(id);
             int userId = 0;
             if (!User.IsInRole("Admin"))
             {
@@ -128,17 +135,17 @@ namespace SalePortal.wwwroot
             {
                 return NotFound();
             }
-            commodityModel = await _context.commodities.FindAsync(id);
-            
+
             if (commodityModel != null)
             {
                 if (commodityModel.Image !=" ")
                 {
                     System.IO.File.Delete(commodityModel.Image);
                 }
-                _context.commodities.Remove(commodityModel);
+                var IsRemovalSucceeded = await _commodityHttpClient.DeleteCommodityAsync(commodityModel.Id);
+                if(IsRemovalSucceeded == false) { return NotFound(); }
             }
-            await _context.SaveChangesAsync();
+
             if (User.IsInRole("Admin"))
             {
                 return RedirectToAction("AdminPage", "Identity", new { aria = "" });
@@ -147,15 +154,15 @@ namespace SalePortal.wwwroot
         }
 
         [Authorize]
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
             int userId = _library.GetUserId(User.Claims.ToList());
-            if (id == null || _context.commodities == null)
+            if (id == null || await _commodityHttpClient.GetCommoditiesAsync() == null)
             {
                 return NotFound();
             }
-
-            var commodityModel = await _context.commodities.FindAsync(id);
+            
+            var commodityModel = await _commodityHttpClient.GetCommodityByIdAsync(id);
             if (commodityModel == null)
             {
                 return NotFound();
@@ -179,8 +186,19 @@ namespace SalePortal.wwwroot
             {
                 return NotFound();
             }
+  
+            var entity = await _commodityHttpClient.GetCommodityByIdAsync(id);
+            //
+            int userId = 0;
+            if (!User.IsInRole("Admin"))
+            {
+                userId = _library.GetUserId(User.Claims.ToList());
+            }
+            if (userId != entity.OwnerId && !User.IsInRole("Admin"))
+            {
+                return View("Error");
+            }
 
-            var entity = await _context.commodities.SingleOrDefaultAsync(x => x.Id == id);
             entity.Description = inputModel.Description;
             entity.Name = inputModel.Name.ToLower().Trim();
             entity.Price = inputModel.Price;
@@ -202,8 +220,9 @@ namespace SalePortal.wwwroot
                     }
                 }
             }
-            _context.commodities.Update(entity);
-            await _context.SaveChangesAsync();
+            var IsPullSucceeded = await _commodityHttpClient.PutCommodityAsync(entity.Id, userId, entity);
+            if (IsPullSucceeded == false) { return View("Error"); };
+            
             if (User.IsInRole("Admin"))
             {
                 return RedirectToAction("AdminPage", "Identity", new { aria = "" });

@@ -16,16 +16,20 @@ public class IdentityLibrary : IIdentityLibrary
 {
     private readonly SalePortalDbConnection _context;
     private readonly IMapper _mapper;
-    public IdentityLibrary(SalePortalDbConnection context, IMapper mapper)
+    private readonly IUserHttpClient _userHttp;
+    public IdentityLibrary(SalePortalDbConnection context, IMapper mapper, IUserHttpClient userHttp)
     {
         _context = context;
         _mapper = mapper;
+        _userHttp = userHttp;
     }
 
-    public ClaimsPrincipal ValidateUserData(string username, string password)
+    public  ClaimsPrincipal ValidateUserData(string username, string password)
     {
         password = ToHashPassword(password);
-        var expectedUser = _context.Users.SingleOrDefault(x => x.Name == username && x.Password == password);
+        //
+        var users =  _userHttp.GetUsers();
+        var expectedUser = users.SingleOrDefault(x => x.Name == username && x.Password == password);
         var expectedAdmin = _context.admins.SingleOrDefault(x => x.Name == username && x.Password == password);
 
         if (expectedUser != null)
@@ -73,7 +77,9 @@ public class IdentityLibrary : IIdentityLibrary
     {
         inputUser.Password = ToHashPassword(inputUser.Password);
         UserEntity user = _mapper.Map<UserEntity>(inputUser);
-        await _context.Users.AddAsync(user);
-        await _context.SaveChangesAsync();
+        /*await _context.Users.AddAsync(user);
+        await _context.SaveChangesAsync();*/
+        await _userHttp.PostUserAsync(user);
+        
     }
 }

@@ -14,29 +14,29 @@ namespace SalePortal.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly SalePortalDbConnection _context;
+        private readonly ICategoryHttpClient _category;
 
-        public CategoryController(SalePortalDbConnection context)
+        public CategoryController(ICategoryHttpClient category)
         {
-            _context = context;
+
+            _category = category;
         }
 
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Categories.ToListAsync());
+            var categories = await _category.GetCategoriesAsync();
+            return View(categories);
         }
 
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null || _context.Categories == null)
+            if (id == null )
             {
                 return NotFound();
             }
-
-            var categoryEntity = await _context.Categories
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var categoryEntity = await _category.GetCategoryByIdAsync(id);
             if (categoryEntity == null)
             {
                 return NotFound();
@@ -56,24 +56,29 @@ namespace SalePortal.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] CategoryEntity categoryEntity)
         {
+            bool IsPostSecseeded = false;
             if (ModelState.IsValid)
             {
-                _context.Add(categoryEntity);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                IsPostSecseeded = await _category.PostCategoryAsync(categoryEntity);
+                if (IsPostSecseeded == true)
+                {
+                    return RedirectToAction(nameof(Index));
+                }        
             }
             return View(categoryEntity);
         }
 
+
+
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null || _context.Categories == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var categoryEntity = await _context.Categories.FindAsync(id);
+            var categoryEntity = await _category.GetCategoryByIdAsync(id);
             if (categoryEntity == null)
             {
                 return NotFound();
@@ -93,37 +98,31 @@ namespace SalePortal.Controllers
 
             if (ModelState.IsValid)
             {
+                bool IsPullSucceeded = false;
                 try
                 {
-                    _context.Update(categoryEntity);
-                    await _context.SaveChangesAsync();
+                    IsPullSucceeded = await _category.PutCategoryAsync(id,categoryEntity);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CategoryEntityExists(categoryEntity.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    
                 }
+                if (IsPullSucceeded == false) { return View("Error"); };
                 return RedirectToAction(nameof(Index));
             }
             return View(categoryEntity);
         }
 
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null || _context.Categories == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var categoryEntity = await _context.Categories
-                .FirstOrDefaultAsync(m => m.Id == id);
+
+            var categoryEntity = await _category.GetCategoryByIdAsync(id);
             if (categoryEntity == null)
             {
                 return NotFound();
@@ -137,23 +136,19 @@ namespace SalePortal.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Categories == null)
+            if ( await _category.GetCategoriesAsync() == null)
             {
                 return Problem("Entity set 'SalePortalDbConnection.Categories'  is null.");
             }
-            var categoryEntity = await _context.Categories.FindAsync(id);
+            bool IsDeleted = false;
+            var categoryEntity = await _category.GetCategoryByIdAsync(id);
             if (categoryEntity != null)
             {
-                _context.Categories.Remove(categoryEntity);
+                IsDeleted = await _category.DeleteCategoryAsync(id);
             }
-            
-            await _context.SaveChangesAsync();
+            if(IsDeleted == false) { return View("Error"); };
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CategoryEntityExists(int id)
-        {
-          return _context.Categories.Any(e => e.Id == id);
-        }
     }
 }
