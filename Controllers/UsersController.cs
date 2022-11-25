@@ -46,24 +46,7 @@ namespace SalePortal.Controllers
             return View(userEntity);
         }
 
-        [Authorize(Roles = "Admin")]
-        public IActionResult Create()
-        {
-            return View();
-        }
 
-        [Authorize(Roles = "Admin")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,SurName,EmailAddress,PhoneNumber,Password")] UserEntity userEntity)
-        {
-            if (ModelState.IsValid)
-            {
-                await _userHttp.PostUserAsync(userEntity);
-                return RedirectToAction(nameof(Index));
-            }
-            return View(userEntity);
-        }
 
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id)
