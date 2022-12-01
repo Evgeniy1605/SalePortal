@@ -14,6 +14,11 @@
     <h2>@Name @SurName</h2>
 </div>
 <hr />
+<div>
+    <a asp-controller="Identity" asp-action="GetOrders" class="btn btn-primary">Your orders</a>
+    <a asp-controller="Identity" asp-action="GetSales" class="btn btn-primary">Your sales</a>
+</div>
+<hr />
 <p>@localizer["Phone number:"] @PhoneNumber</p>
 <br />
 <p>@localizer["Email:"] @EmailAddress</p>

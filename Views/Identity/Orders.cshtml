@@ -1,0 +1,16 @@
+﻿@model List<SalePortal.Entities.CommodityOrderEntity>
+<h2 class="page">Your orders:</h2>
+<br />
+<table>
+@foreach (var item in Model)
+{
+    string path = "~/Images/" + $"{item.Commodity.Id}" + ".png";
+    <tr>
+        <td><p><img src="@path" asp-append-version="true" width="50" /></p></td>
+        <td><p>@item.Commodity.Name</p></td>
+        <td><p>@item.Commodity.Price</p></td>
+        
+    </tr>
+    
+}
+</table>

@@ -2,7 +2,7 @@
 
 namespace SalePortal.Entities
 {
-    internal class CommodityOrderEntity
+    public class CommodityOrderEntity
     {
         public int Id { get; set; }
 

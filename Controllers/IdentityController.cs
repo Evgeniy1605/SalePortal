@@ -15,17 +15,18 @@ namespace SalePortal.Controllers
     public class IdentityController : Controller
     {
 
-        
+        private readonly IOrderCommodity _orderCommodity;
         private readonly ILibrary _library;
         private readonly IHtmlLocalizer<IdentityController> _localizer;
         private readonly IIdentityLibrary _identityLibrary;
         private readonly ICommodityHttpClient _commodityHttpClient;
-        public IdentityController(ILibrary library, IHtmlLocalizer<IdentityController> localizer, IIdentityLibrary identityLibrary, ICommodityHttpClient commodityHttpClient)
+        public IdentityController(ILibrary library, IHtmlLocalizer<IdentityController> localizer, IIdentityLibrary identityLibrary, ICommodityHttpClient commodityHttpClient, IOrderCommodity orderCommodity)
         {
             _localizer = localizer;
             _library = library;
             _identityLibrary = identityLibrary;
             _commodityHttpClient = commodityHttpClient;
+            _orderCommodity= orderCommodity;
         }
 
 
@@ -91,6 +92,25 @@ namespace SalePortal.Controllers
         public IActionResult AdminPage()
         {
             return View();
+        }
+
+
+        [Authorize]
+        public async Task<IActionResult> GetOrders()
+        {
+            var userId = _library.GetUserId(User.Claims.ToList());
+            var orders = await _orderCommodity.GetOrdersAsync(userId);
+
+            return View("Orders", orders);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> GetSales()
+        {
+            var userId = _library.GetUserId(User.Claims.ToList());
+            var sales = await _orderCommodity.GetSalesAsync(userId);
+
+            return View("Sales", sales);
         }
     }
 }
