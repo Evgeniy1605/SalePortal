@@ -41,6 +41,7 @@ public static class ServicesRegistration
             opt.SupportedCultures= suportedCultures;
             opt.SupportedUICultures= suportedCultures;
         });
+        services.AddSignalR();
 
         return services;
     }
