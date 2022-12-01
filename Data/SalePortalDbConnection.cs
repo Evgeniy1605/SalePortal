@@ -13,7 +13,8 @@ namespace SalePortal.Data
         public DbSet<CategoryEntity> Categories { get; set; }
         public DbSet<UserEntity> Users { get; set; }
         public DbSet<CommodityEntity> commodities { get; set; }
-
         public DbSet<AdminEntity> admins { get; set; }
+
+        internal DbSet<CommodityOrderEntity> CommodityOrders { get; set; }
     }
 }
