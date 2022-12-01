@@ -56,6 +56,9 @@ namespace SalePortal.Controllers
             var result = commotities.Where(x => x.TypeId == id).ToList();
             return View("Index",  result);
         }
-
+        public async Task<IActionResult> AddOrderForBuyingCommodity()
+        {
+            return View();
+        }
     }
 }
