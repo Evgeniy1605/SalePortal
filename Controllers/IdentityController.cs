@@ -112,5 +112,11 @@ namespace SalePortal.Controllers
 
             return View("Sales", sales);
         }
+
+        [Authorize]
+        public async Task<IActionResult> DetailsOfOrder(int id)
+        {
+            return View();
+        }
     }
 }

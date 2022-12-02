@@ -1,13 +1,15 @@
 ﻿@model List<SalePortal.Entities.CommodityEntity>
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer;
+@inject SalePortal.Data.ILibrary _library;
 @{
+    var userId = _library.GetUserId(User.Claims.ToList());
     var claims = User.Claims.ToList();
     var Name = User.Identity.Name;
     var SurName = claims[3].ToString().Split(':')[1].Trim().ToString();
     var EmailAddress = claims[4].ToString().Split(':')[1].Trim().ToString();
     var PhoneNumber = claims[5].ToString().Split(':')[1].Trim().ToString();
 }
-
+<input id="userId" type="hidden" value="@userId" />
 <div class="text-center">
     <h1>@localizer["User page"]</h1>
     <img src="Icons/user1.png" width="50" />
@@ -18,6 +20,25 @@
     <a asp-controller="Identity" asp-action="GetOrders" class="btn btn-primary">Your orders</a>
     <a asp-controller="Identity" asp-action="GetSales" class="btn btn-primary">Your sales</a>
 </div>
+<hr />
+
+
+<body>
+    <p>SignalR</p><a id="a"></a>
+    <div>
+        <button id="GetOrders" class="btn btn-primary">Your orders</button>
+        <a id="GetSales" class="btn btn-primary">Your sales</a>
+    </div>
+    <table id="ordersResult">
+        
+    </table>
+    
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+    <script src="~/js/order.js"></script>
+</body>
+
+
 <hr />
 <p>@localizer["Phone number:"] @PhoneNumber</p>
 <br />
