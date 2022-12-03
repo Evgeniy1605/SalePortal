@@ -1,0 +1,47 @@
+﻿@inject SalePortal.Data.ILibrary _library;
+@model SalePortal.Entities.CommodityOrderEntity;
+
+@{
+    string path = "~/Images/" + $"{Model.Commodity.Id}" + ".png";
+    int userid = 0;
+    if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
+    {
+        userid = _library.GetUserId(User.Claims.ToList());
+    }
+}
+<h1 class="page">@Model.Commodity.Name</h1>
+<div id="IsSubmitted ">
+    <img width="150" src="@path" asp-append-version="true" />
+    @if (Model.ApprovedByOwner == false)
+    {
+        <img width="130" src="~/icons/close-222-1153172.png" />
+    }
+    @if (Model.ApprovedByOwner)
+    {
+        <img width="130" src="~/icons/sibmitted-icon-.png" />
+    }
+    
+</div>
+
+<div>
+    
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Commodity.Price)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Commodity.Price)
+        </dd>
+        
+    </dl>
+
+    @if (userid == Model.CommodityOwnerId)
+    {
+        <a asp-action="" asp-controller ="" asp-route-orderId="@Model.Id" class="btn btn-success">Submit Order?</a>
+    }
+    @if (userid == Model.CommodityOwnerId || userid == Model.CustomerId)
+    {
+        <a asp-action="" asp-controller="" asp-route-orderId="@Model.Id" class="btn btn-danger">Delete Order?</a>
+    }
+</div>

@@ -52,8 +52,9 @@ hubConnection.on("Receive", function (result) {
         var price = item.commodity.price;
         var imagePath = `~/Images/${commodityId}.png`
         var name = item.commodity.name;
-        document.getElementById("ordersResult").innerHTML += `<td><img src="${imagePath}"  width="50" /></td> <tr><td>${name}</td> <td>${price} $</td>  <td><a class="btn btn-primary" href="/Identity/DetailsOfOrder/?id=${id}" >Details</a></td> </tr>`
-
+        var approved = item.approvedByOwner;
+        document.getElementById("ordersResult").innerHTML += `<td><img asp-append-version ="true" src="${imagePath}"  width="50" /></td> <tr><td>${name}</td> <td>${price} $</td>  <td><a class="btn btn-primary" href="/Identity/DetailsOfOrder/?id=${id}" >Details</a></td> </tr>`
+       
 
     });
 });

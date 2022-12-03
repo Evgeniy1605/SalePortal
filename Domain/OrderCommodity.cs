@@ -31,9 +31,21 @@ namespace SalePortal.Domain
 
         }
 
-        public Task ApproveOrderAsync(int orderId)
+        public async Task ApproveOrderAsync(int orderId)
         {
-            throw new NotImplementedException();
+
+            var order = await _context.CommodityOrders.SingleOrDefaultAsync(x => x.Id == orderId);
+            if (order != null)
+            {
+                order.ApprovedByOwner = true;
+                _context.CommodityOrders.Update(order);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<CommodityOrderEntity> GetOrderAsync(int orderId)
+        {
+            return await _context.CommodityOrders.Include(x => x.Commodity).Include(x => x.Customer).Include(x => x.CommodityOwner).SingleOrDefaultAsync(x => x.Id == orderId);
         }
 
         public async Task<List<CommodityOrderEntity>> GetOrdersAsync(int userId)
@@ -51,7 +63,16 @@ namespace SalePortal.Domain
             throw new NotImplementedException();
         }
 
-        
+        public async Task UnApproveOrderAsync(int orderId)
+        {
+            var order = await _context.CommodityOrders.SingleOrDefaultAsync(x => x.Id == orderId);
+            if (order != null)
+            {
+                order.ApprovedByOwner = false;
+                _context.CommodityOrders.Update(order);
+                await _context.SaveChangesAsync();
+            }
 
+        }
     }
 }

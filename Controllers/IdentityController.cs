@@ -116,6 +116,13 @@ namespace SalePortal.Controllers
         [Authorize]
         public async Task<IActionResult> DetailsOfOrder(int id)
         {
+            var order = await _orderCommodity.GetOrderAsync(id);
+            return View(order);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> ApproveOrder(int orderId)
+        {
             return View();
         }
     }
