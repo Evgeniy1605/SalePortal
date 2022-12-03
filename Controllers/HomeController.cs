@@ -67,7 +67,7 @@ namespace SalePortal.Controllers
         {
             var userId = _library.GetUserId(User.Claims.ToList());
             await _orderCommodity.AddOrderAsync(commodityId, userId);
-            return View();
+            return RedirectToAction("UserPage", "Identity", new { aria = "" });
         }
     }
 }

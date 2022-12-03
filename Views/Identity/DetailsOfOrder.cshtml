@@ -24,7 +24,7 @@
     </div>
     
 </div>
-
+<input id="orderId" type="hidden" value="@Model.Id" />
 <div>
     
     <hr />
@@ -52,7 +52,7 @@
     }
     @if (userid == Model.CommodityOwnerId || userid == Model.CustomerId)
     {
-        <a asp-action="" asp-controller="" asp-route-orderId="@Model.Id" class="btn btn-danger">Delete Order?</a>
+        <a id="deleteOrder" class="btn btn-danger">Delete Order?</a>
     }
 </div>
 
@@ -71,3 +71,4 @@
         });
     </script>
 }
+<script src="~/js/deleteorder.js"></script>

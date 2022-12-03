@@ -143,5 +143,21 @@ namespace SalePortal.Controllers
             }
             return View();
         }
+
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> DeleteOrder(int id)
+        {
+            var order = await _orderCommodity.GetOrderAsync(id);
+            int userId = _library.GetUserId(User.Claims.ToList());
+
+            if (order == null || userId != order.CustomerId && userId != order.CommodityOwnerId)
+            {
+                return View("Error");
+            }
+            await _orderCommodity.RemoveOrderAsync(id);
+            return RedirectToAction("UserPage", "Identity", new {aria=""});
+        }
     }
 }

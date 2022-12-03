@@ -58,9 +58,14 @@ namespace SalePortal.Domain
             return await _context.CommodityOrders.Include(x => x.Commodity).Include(x => x.Customer).Include(x => x.CommodityOwner).Where(x => x.CommodityOwnerId == userId).ToListAsync();
         }
 
-        public Task RemoveOrderAsync(int orderId)
+        public async Task RemoveOrderAsync(int orderId)
         {
-            throw new NotImplementedException();
+            var order = await _context.CommodityOrders.SingleOrDefaultAsync(x =>x.Id == orderId);
+            if (order != null)
+            {
+                _context.CommodityOrders.Remove(order);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task UnApproveOrderAsync(int orderId)
