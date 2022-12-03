@@ -10,9 +10,10 @@
     }
 }
 <h1 class="page">@Model.Commodity.Name</h1>
-<div id="IsSubmitted ">
+<div >
     <img width="150" src="@path" asp-append-version="true" />
-    @if (Model.ApprovedByOwner == false)
+    <div id="IsSubmitted">
+        @if (Model.ApprovedByOwner == false)
     {
         <img width="130" src="~/icons/close-222-1153172.png" />
     }
@@ -20,6 +21,7 @@
     {
         <img width="130" src="~/icons/sibmitted-icon-.png" />
     }
+    </div>
     
 </div>
 
@@ -38,10 +40,34 @@
 
     @if (userid == Model.CommodityOwnerId)
     {
-        <a asp-action="" asp-controller ="" asp-route-orderId="@Model.Id" class="btn btn-success">Submit Order?</a>
+        @if (Model.ApprovedByOwner == false)
+        {
+            <a id="submit" class="btn btn-success">Approve Order?</a>
+        }
+        @if (Model.ApprovedByOwner == true)
+        {
+            <a id="submit" class="btn btn-success">Disapprove Order?</a>
+        }
+        
     }
     @if (userid == Model.CommodityOwnerId || userid == Model.CustomerId)
     {
         <a asp-action="" asp-controller="" asp-route-orderId="@Model.Id" class="btn btn-danger">Delete Order?</a>
     }
 </div>
+
+@section Scripts {
+    <script>
+        document.getElementById("submit").addEventListener("click", function () {
+            document.getElementById("IsSubmitted").innerHTML = "";
+            $('#IsSubmitted').load("/Identity/ApproveOrder/?orderId=@Model.Id")
+            var buttomValue = document.getElementById("submit").value;
+            if (buttomValue == "Approve Order?") {
+                document.getElementById("submit").textContent = "Disapprove Order?"
+            };
+            if (buttomValue == "Disapprove Order?") {
+                document.getElementById("submit").textContent = "Approve Order?"
+            };
+        });
+    </script>
+}

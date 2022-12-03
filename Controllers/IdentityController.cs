@@ -123,6 +123,24 @@ namespace SalePortal.Controllers
         [Authorize]
         public async Task<IActionResult> ApproveOrder(int orderId)
         {
+            var order = await _orderCommodity.GetOrderAsync(orderId);
+            var userId = _library.GetUserId(User.Claims.ToList());
+
+            if (userId != order.CommodityOwnerId)
+            {
+                return View("Error");
+            }
+
+            if (order.ApprovedByOwner == false)
+            {
+                await _orderCommodity.ApproveOrderAsync(orderId);
+                return PartialView("_ApprovedOrder");
+            }
+            if (order.ApprovedByOwner == true)
+            {
+                await _orderCommodity.UnApproveOrderAsync(orderId);
+                return PartialView("_UnApprovedOrder");
+            }
             return View();
         }
     }
