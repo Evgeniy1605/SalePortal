@@ -62,12 +62,6 @@ namespace SalePortal.Controllers
             return View("Index",  result);
         }
 
-        [Authorize]
-        public async Task<IActionResult> AddOrderForBuyingCommodity(int commodityId)
-        {
-            var userId = _library.GetUserId(User.Claims.ToList());
-            await _orderCommodity.AddOrderAsync(commodityId, userId);
-            return RedirectToAction("UserPage", "Identity", new { aria = "" });
-        }
+        
     }
 }

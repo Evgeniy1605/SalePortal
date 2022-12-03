@@ -94,24 +94,15 @@ namespace SalePortal.Controllers
             return View();
         }
 
-
         [Authorize]
-        public async Task<IActionResult> GetOrders()
+        public async Task<IActionResult> AddOrderForBuyingCommodity(int commodityId)
         {
             var userId = _library.GetUserId(User.Claims.ToList());
-            var orders = await _orderCommodity.GetOrdersAsync(userId);
-
-            return View("Orders", orders);
+            await _orderCommodity.AddOrderAsync(commodityId, userId);
+            return RedirectToAction("UserPage", "Identity", new { aria = "" });
         }
 
-        [Authorize]
-        public async Task<IActionResult> GetSales()
-        {
-            var userId = _library.GetUserId(User.Claims.ToList());
-            var sales = await _orderCommodity.GetSalesAsync(userId);
-
-            return View("Sales", sales);
-        }
+        
 
         [Authorize]
         public async Task<IActionResult> DetailsOfOrder(int id)
@@ -159,5 +150,6 @@ namespace SalePortal.Controllers
             await _orderCommodity.RemoveOrderAsync(id);
             return RedirectToAction("UserPage", "Identity", new {aria=""});
         }
+
     }
 }
