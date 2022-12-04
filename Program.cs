@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SalePortal.Data;
-
+using SalePortal.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +21,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapHub<OrderHub>("/orders");
 app.UseRequestLocalization(requiredService);
 app.MapControllerRoute(
     name: "default",

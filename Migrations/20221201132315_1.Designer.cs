@@ -12,7 +12,7 @@ using SalePortal.Data;
 namespace SalePortal.Migrations
 {
     [DbContext(typeof(SalePortalDbConnection))]
-    [Migration("20221116133104_1")]
+    [Migration("20221201132315_1")]
     partial class _1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -103,6 +103,37 @@ namespace SalePortal.Migrations
                     b.ToTable("commodities");
                 });
 
+            modelBuilder.Entity("SalePortal.Entities.CommodityOrderEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<bool>("ApprovedByOwner")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("CommodityId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CommodityOwnerId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommodityId");
+
+                    b.HasIndex("CommodityOwnerId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("CommodityOrders");
+                });
+
             modelBuilder.Entity("SalePortal.Entities.UserEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -153,6 +184,27 @@ namespace SalePortal.Migrations
                     b.Navigation("Owner");
 
                     b.Navigation("Type");
+                });
+
+            modelBuilder.Entity("SalePortal.Entities.CommodityOrderEntity", b =>
+                {
+                    b.HasOne("SalePortal.Entities.CommodityEntity", "Commodity")
+                        .WithMany()
+                        .HasForeignKey("CommodityId");
+
+                    b.HasOne("SalePortal.Entities.UserEntity", "CommodityOwner")
+                        .WithMany()
+                        .HasForeignKey("CommodityOwnerId");
+
+                    b.HasOne("SalePortal.Entities.UserEntity", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId");
+
+                    b.Navigation("Commodity");
+
+                    b.Navigation("CommodityOwner");
+
+                    b.Navigation("Customer");
                 });
 #pragma warning restore 612, 618
         }

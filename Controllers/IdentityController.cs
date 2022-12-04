@@ -15,17 +15,18 @@ namespace SalePortal.Controllers
     public class IdentityController : Controller
     {
 
-        
+        private readonly IOrderCommodity _orderCommodity;
         private readonly ILibrary _library;
         private readonly IHtmlLocalizer<IdentityController> _localizer;
         private readonly IIdentityLibrary _identityLibrary;
         private readonly ICommodityHttpClient _commodityHttpClient;
-        public IdentityController(ILibrary library, IHtmlLocalizer<IdentityController> localizer, IIdentityLibrary identityLibrary, ICommodityHttpClient commodityHttpClient)
+        public IdentityController(ILibrary library, IHtmlLocalizer<IdentityController> localizer, IIdentityLibrary identityLibrary, ICommodityHttpClient commodityHttpClient, IOrderCommodity orderCommodity)
         {
             _localizer = localizer;
             _library = library;
             _identityLibrary = identityLibrary;
             _commodityHttpClient = commodityHttpClient;
+            _orderCommodity= orderCommodity;
         }
 
 
@@ -92,5 +93,63 @@ namespace SalePortal.Controllers
         {
             return View();
         }
+
+        [Authorize]
+        public async Task<IActionResult> AddOrderForBuyingCommodity(int commodityId)
+        {
+            var userId = _library.GetUserId(User.Claims.ToList());
+            await _orderCommodity.AddOrderAsync(commodityId, userId);
+            return RedirectToAction("UserPage", "Identity", new { aria = "" });
+        }
+
+        
+
+        [Authorize]
+        public async Task<IActionResult> DetailsOfOrder(int id)
+        {
+            var order = await _orderCommodity.GetOrderAsync(id);
+            return View(order);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> ApproveOrder(int orderId)
+        {
+            var order = await _orderCommodity.GetOrderAsync(orderId);
+            var userId = _library.GetUserId(User.Claims.ToList());
+
+            if (userId != order.CommodityOwnerId)
+            {
+                return View("Error");
+            }
+
+            if (order.ApprovedByOwner == false)
+            {
+                await _orderCommodity.ApproveOrderAsync(orderId);
+                return PartialView("_ApprovedOrder");
+            }
+            if (order.ApprovedByOwner == true)
+            {
+                await _orderCommodity.UnApproveOrderAsync(orderId);
+                return PartialView("_UnApprovedOrder");
+            }
+            return View();
+        }
+
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> DeleteOrder(int id)
+        {
+            var order = await _orderCommodity.GetOrderAsync(id);
+            int userId = _library.GetUserId(User.Claims.ToList());
+
+            if (order == null || userId != order.CustomerId && userId != order.CommodityOwnerId)
+            {
+                return View("Error");
+            }
+            await _orderCommodity.RemoveOrderAsync(id);
+            return RedirectToAction("UserPage", "Identity", new {aria=""});
+        }
+
     }
 }

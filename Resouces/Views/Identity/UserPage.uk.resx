@@ -132,4 +132,10 @@
   <data name="Your adverts:" xml:space="preserve">
     <value>Ваші оголошення:</value>
   </data>
+  <data name="Your orders" xml:space="preserve">
+    <value>Ваші замовлення</value>
+  </data>
+  <data name="Your sales" xml:space="preserve">
+    <value>Ваші продажі</value>
+  </data>
 </root>

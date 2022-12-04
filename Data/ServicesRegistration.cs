@@ -27,6 +27,7 @@ public static class ServicesRegistration
         services.AddTransient<IIdentityLibrary, IdentityLibrary>();
         services.AddTransient<IUserHttpClient, UserHttpClient>();
         services.AddTransient<ICommodityHttpClient, CommodityHttpClient>();
+        services.AddTransient<IOrderCommodity, OrderCommodity>();
         services.AddLocalization(opt => { opt.ResourcesPath = "Resouces"; });
         services.AddMvc().AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix).AddDataAnnotationsLocalization();
         services.Configure<RequestLocalizationOptions>(opt => 
@@ -40,6 +41,7 @@ public static class ServicesRegistration
             opt.SupportedCultures= suportedCultures;
             opt.SupportedUICultures= suportedCultures;
         });
+        services.AddSignalR();
 
         return services;
     }

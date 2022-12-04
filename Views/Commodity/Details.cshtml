@@ -55,4 +55,8 @@
         <a asp-action="Delete" class="btn btn-danger" asp-route-id="@Model?.Id">@localizer["Delete"]</a>
     </div>
 }
+@if (User.Identity.IsAuthenticated && userid != Model.OwnerId)
+{
+    <a asp-action="AddOrderForBuyingCommodity" asp-route-commodityId="@Model.Id" asp-controller="Identity" class="btn btn-outline-primary">Buy</a>
+}
 
