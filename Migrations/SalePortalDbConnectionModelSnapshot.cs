@@ -60,6 +60,34 @@ namespace SalePortal.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("SalePortal.Entities.ChatEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("CommodityId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SellerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommodityId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("SellerId");
+
+                    b.ToTable("Chats");
+                });
+
             modelBuilder.Entity("SalePortal.Entities.CommodityEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -132,6 +160,35 @@ namespace SalePortal.Migrations
                     b.ToTable("CommodityOrders");
                 });
 
+            modelBuilder.Entity("SalePortal.Entities.MessageEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("ChatId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("SenderId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChatId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Messages");
+                });
+
             modelBuilder.Entity("SalePortal.Entities.UserEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -163,6 +220,27 @@ namespace SalePortal.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("SalePortal.Entities.ChatEntity", b =>
+                {
+                    b.HasOne("SalePortal.Entities.CommodityEntity", "Commodity")
+                        .WithMany()
+                        .HasForeignKey("CommodityId");
+
+                    b.HasOne("SalePortal.Entities.UserEntity", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId");
+
+                    b.HasOne("SalePortal.Entities.UserEntity", "Seller")
+                        .WithMany()
+                        .HasForeignKey("SellerId");
+
+                    b.Navigation("Commodity");
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Seller");
                 });
 
             modelBuilder.Entity("SalePortal.Entities.CommodityEntity", b =>
@@ -203,6 +281,21 @@ namespace SalePortal.Migrations
                     b.Navigation("CommodityOwner");
 
                     b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("SalePortal.Entities.MessageEntity", b =>
+                {
+                    b.HasOne("SalePortal.Entities.ChatEntity", "Chat")
+                        .WithMany()
+                        .HasForeignKey("ChatId");
+
+                    b.HasOne("SalePortal.Entities.UserEntity", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId");
+
+                    b.Navigation("Chat");
+
+                    b.Navigation("Sender");
                 });
 #pragma warning restore 612, 618
         }
