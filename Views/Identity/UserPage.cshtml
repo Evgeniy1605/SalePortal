@@ -22,8 +22,8 @@
 <body>
     <p></p><a id="a"></a>
     <div>
-        <button id="GetOrders" class="btn btn-primary">Your orders</button>
-        <a id="GetSales" class="btn btn-primary">Your sales</a>
+        <button id="GetOrders" class="btn btn-primary">@localizer["Your orders"]</button>
+        <a id="GetSales" class="btn btn-primary">@localizer["Your sales"]</a>
     </div>
     <table id="ordersResult">
         
@@ -45,8 +45,6 @@
 <br />
 @foreach (var item in Model)
 {
-
-
 
     string path = "~/Images/" + $"{item.Id}" + ".png";
     <form  asp-controller="Commodity" asp-action="Details" asp-route-id = "@item.Id">
