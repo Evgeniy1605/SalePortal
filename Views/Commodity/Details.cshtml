@@ -32,6 +32,10 @@
             @Html.DisplayFor(model => model.Owner.Name)
             @Html.DisplayFor(model => model.Owner.PhoneNumber)
             @Html.DisplayFor(model => model.Owner.EmailAddress)
+            @if (User.Identity.IsAuthenticated && userid != Model.OwnerId)
+            {
+                <a asp-action="Index" asp-controller="Chat" asp-route-commodityId = "@Model.Id" asp-route-customerId="@userid" ><img width="50" src="~/icons/messageicon.png" /></a>
+            }
         </dd>
 
         <dt class = "col-sm-2">

@@ -1,0 +1,9 @@
+﻿@model List<SalePortal.Entities.MessageEntity>;
+
+<input id="chatId" type="hidden" value="@Model[0].ChatId" />
+<div id="chatroom">
+    @foreach (var item in Model)
+    {
+        <p>@item.Sender: <b>@item.Message</b></p>
+    }
+</div>
