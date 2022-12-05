@@ -28,6 +28,7 @@ public static class ServicesRegistration
         services.AddTransient<IUserHttpClient, UserHttpClient>();
         services.AddTransient<ICommodityHttpClient, CommodityHttpClient>();
         services.AddTransient<IOrderCommodity, OrderCommodity>();
+        services.AddTransient<IChat, Chat>();
         services.AddLocalization(opt => { opt.ResourcesPath = "Resouces"; });
         services.AddMvc().AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix).AddDataAnnotationsLocalization();
         services.Configure<RequestLocalizationOptions>(opt => 
