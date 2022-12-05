@@ -22,6 +22,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapHub<OrderHub>("/orders");
+app.MapHub<ChatHub>("/chat");
 app.UseRequestLocalization(requiredService);
 app.MapControllerRoute(
     name: "default",
