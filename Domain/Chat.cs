@@ -94,5 +94,13 @@ namespace SalePortal.Domain
         {
             throw new NotImplementedException();
         }
+
+        public async Task<List<ChatEntity>> GetSellersChatsAsync(int userId)
+        {
+            return await _context.Chats
+                .Include(x => x.Commodity)
+                .Where(x => x.SellerId == userId)
+                .ToListAsync();
+        }
     }
 }

@@ -48,5 +48,11 @@ namespace SalePortal.Controllers
             var chats = await _chat.GetCustomersChatsAsync(userId);
             return PartialView("_ChatsAsCustomer", chats);
         }
+        [Authorize]
+        public async Task<IActionResult> SellerChats(int userId)
+        {
+            var chats = await _chat.GetSellersChatsAsync(userId);
+            return PartialView("_ChatsAsSeller", chats);
+        }
     }
 }
