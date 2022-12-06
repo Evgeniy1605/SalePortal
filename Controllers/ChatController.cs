@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SalePortal.Data;
+using SalePortal.Domain;
+using SalePortal.Entities;
 
 namespace SalePortal.Controllers
 {
@@ -14,25 +17,29 @@ namespace SalePortal.Controllers
             _commodityHttpClient = commodityHttpClient;
         }
 
+        [Authorize]
         public async Task<IActionResult> Index(int commodityId, int customerId)
         {
-            var x = 1;
             var commodity = await _commodityHttpClient.GetCommodityByIdAsync(commodityId);
             int sellerId = commodity.OwnerId;
-            var chat = _chat.GetCatByCustomerIdSellerIdAsync(customerId, sellerId);
+            var chat = await _chat.GetChatByCustomerIdSellerIdAsync(customerId, sellerId);
             if (chat == null)
             {
-                return RedirectToAction(nameof(CreateChat));
+                return RedirectToAction(nameof(CreateChat), new {commodityId, customerId});
             }
 
-            var messeges = await _chat.GetMessagesByChatIdAsync(chat.Id);
+            var chatView = await _chat.GetChatViewModelAsync(chat.Id);
 
-            return View(messeges);
+            return View(chatView);
         }
 
-        public IActionResult CreateChat()
+        [Authorize]
+        public async Task <IActionResult> CreateChat(int commodityId, int customerId)
         {
-            return View();
+
+            await _chat.CreateChatAsync(customerId, commodityId);
+            
+            return RedirectToAction(nameof(Index), new {commodityId, customerId});
         }
     }
 }

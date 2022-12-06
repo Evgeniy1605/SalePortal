@@ -1,10 +1,11 @@
 ﻿using SalePortal.Entities;
+using SalePortal.Models;
 
 namespace SalePortal.Data
 {
     public interface IChat
     {
-        public Task<ChatEntity> GetCatByCustomerIdSellerIdAsync(int customerId, int sellerId);
+        public Task<ChatEntity> GetChatByCustomerIdSellerIdAsync(int customerId, int sellerId);
         public Task CreateChatAsync(int customerId, int commodityId);
 
         public Task<List<MessageEntity>> GetMessagesByChatIdAsync(int chatId);
@@ -13,6 +14,9 @@ namespace SalePortal.Data
         public Task<ChatEntity> GetChatByIdAsync(int chatId);
         public Task AddMessageByIdAsync(int messageId);
 
-        
+        public Task<ChatViewModel> GetChatViewModelAsync(int chatId);
+
+
+
     }
 }

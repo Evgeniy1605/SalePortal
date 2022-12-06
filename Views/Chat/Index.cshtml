@@ -1,9 +1,17 @@
-﻿@model List<SalePortal.Entities.MessageEntity>;
-
-<input id="chatId" type="hidden" value="@Model[0].ChatId" />
+﻿@model ChatViewModel
+@inject SalePortal.Data.ILibrary _library;
+@{
+    int userId = _library.GetUserId(User.Claims.ToList());
+}
+<h1>@Model.Chat.Commodity.Name</h1>
+<input id="chatId" type="hidden" value="@Model.Chat.Id" />
+<input id="userId" type="hidden" value="@userId" />
 <div id="chatroom">
-    @foreach (var item in Model)
+    @foreach (var item in Model.Messages)
     {
         <p>@item.Sender: <b>@item.Message</b></p>
     }
 </div>
+
+<script src="~/js/signalr/dist/browser/signalr.min.js"></script>
+<script src="~/js/chatclientsitejs.js"></script>
