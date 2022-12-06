@@ -12,7 +12,7 @@ namespace SalePortal.Data
         public Task DeleteChatAsync(int chatId);
         public Task DeleteMessageAsync(int messageId);
         public Task<ChatEntity> GetChatByIdAsync(int chatId);
-        public Task AddMessageByIdAsync(int messageId);
+        public Task AddMessageAsync(int chatId, int senderId, string message);
 
         public Task<ChatViewModel> GetChatViewModelAsync(int chatId);
 

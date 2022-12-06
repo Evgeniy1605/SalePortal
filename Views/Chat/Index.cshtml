@@ -9,9 +9,12 @@
 <div id="chatroom">
     @foreach (var item in Model.Messages)
     {
-        <p>@item.Sender: <b>@item.Message</b></p>
+        <p>@item.Sender.Name: <b>@item.Message</b></p>
     }
 </div>
-
+<div id="divChatInput" class="divChatInput">
+    <input id="chatInput" type="text" />
+    <button id="sendBtn" class="btn btn-primary">Send</button>
+</div>
 <script src="~/js/signalr/dist/browser/signalr.min.js"></script>
-<script src="~/js/chatclientsitejs.js"></script>
+<script src="~/js/chatclientsitejsss.js"></script>

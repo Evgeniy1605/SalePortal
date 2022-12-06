@@ -17,9 +17,17 @@ namespace SalePortal.Domain
             _userHttp = userHttp;
         }
 
-        public Task AddMessageByIdAsync(int messageId)
+        public async Task AddMessageAsync(int chatId, int senderId, string message)
         {
-            throw new NotImplementedException();
+            MessageEntity messageEntity = new MessageEntity()
+            {
+                ChatId = chatId,
+                SenderId = senderId,
+                Message = message,
+                Date = DateTime.Now
+            };
+            await _context.Messages.AddAsync(messageEntity);
+            await _context.SaveChangesAsync();
         }
 
         public async Task CreateChatAsync(int customerId, int commodityId)
@@ -68,7 +76,7 @@ namespace SalePortal.Domain
             {
                 return chatView;
             }
-            var messeges = await _context.Messages.Where(x => x.ChatId == chatId).ToListAsync();
+            var messeges = await _context.Messages.Include(x => x.Sender).Where(x => x.ChatId == chatId).ToListAsync();
             chatView.Chat = chat;
             chatView.Messages = messeges;
             return chatView;
