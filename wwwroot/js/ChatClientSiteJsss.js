@@ -6,13 +6,17 @@ const chatId = parseInt(document.getElementById("chatId").value);
 document.getElementById("sendBtn").addEventListener("click", function () {
     const userId = parseInt(document.getElementById("userId").value); 
     const message = document.getElementById("chatInput").value;
-    hubConnection.invoke("Send", message, userId, chatId) 
+    hubConnection.invoke("Send", message, userId, chatId)
+        .then(function () {
+            document.getElementById("chatInput").value = "";
+        })
         .catch(function (err) {
             return console.error(err.toString());
         });
 });
 
 hubConnection.on("Receive", function (message, userName) {
+    
     const p = document.createElement("p");
     p.textContent = userName + ":" + " ";
     const b = document.createElement("b");
