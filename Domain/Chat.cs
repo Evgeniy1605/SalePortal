@@ -48,9 +48,24 @@ namespace SalePortal.Domain
             await _context.SaveChangesAsync();
         }
 
-        public Task DeleteChatAsync(int chatId)
+        public async Task DeleteChatAsync(int chatId)
         {
-            throw new NotImplementedException();
+            var messeges = await _context.Messages.Where(x => x.ChatId == chatId).ToListAsync();
+            if (messeges.Count !=0)
+            {
+                foreach (var item in messeges)
+                {
+                    _context.Messages.Remove(item);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            var chat = await _context.Chats.SingleOrDefaultAsync(x => x.Id == chatId);
+            if (chat != null)
+            {
+                _context.Chats.Remove(chat);
+                await _context.SaveChangesAsync();
+            }
+
         }
 
         public Task DeleteMessageAsync(int messageId)
@@ -63,9 +78,9 @@ namespace SalePortal.Domain
             return await _context.Chats.SingleOrDefaultAsync(x => x.CustomerId == customerId && x.SellerId == sellerId);
         }
 
-        public Task<ChatEntity> GetChatByIdAsync(int chatId)
+        public async Task<ChatEntity> GetChatByIdAsync(int chatId)
         {
-            throw new NotImplementedException();
+            return await _context.Chats.SingleOrDefaultAsync(x => x.Id == chatId);
         }
 
         public async Task<ChatViewModel> GetChatViewModelAsync(int chatId)

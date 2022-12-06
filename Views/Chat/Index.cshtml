@@ -2,10 +2,21 @@
 @inject SalePortal.Data.ILibrary _library;
 @{
     int userId = _library.GetUserId(User.Claims.ToList());
+    string path = "~/Images/" + $"{Model.Chat.CommodityId}" + ".png";
 }
-<h1>@Model.Chat.Commodity.Name</h1>
+<div class ="page">
+    <img  src="@path" asp-append-version="true" width="150" />
+    
+</div>
+<div>
+    <p><h1>@Model.Chat.Commodity.Name</h1></p>
+    <br />
+    <a class="btn btn-danger" asp-action="DeleteChat" asp-controller="Chat" asp-route-chatId="@Model.Chat.Id"><b>Delete chat</b></a>
+</div>
+
 <input id="chatId" type="hidden" value="@Model.Chat.Id" />
 <input id="userId" type="hidden" value="@userId" />
+<hr />
 <div id="chatroom">
     @foreach (var item in Model.Messages)
     {

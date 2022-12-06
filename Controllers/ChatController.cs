@@ -10,11 +10,13 @@ namespace SalePortal.Controllers
     {
         private readonly IChat _chat;
         private readonly ICommodityHttpClient _commodityHttpClient;
-        public ChatController(IChat chat, ICommodityHttpClient commodityHttpClient)
+        private readonly ILibrary _library;
+        public ChatController(IChat chat, ICommodityHttpClient commodityHttpClient, ILibrary library)
         {
 
             _chat = chat;
             _commodityHttpClient = commodityHttpClient;
+            _library = library;
         }
 
         [Authorize]
@@ -53,6 +55,20 @@ namespace SalePortal.Controllers
         {
             var chats = await _chat.GetSellersChatsAsync(userId);
             return PartialView("_ChatsAsSeller", chats);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> DeleteChat(int chatId)
+        {
+            var userId = _library.GetUserId(User.Claims.ToList());
+            var chat = await _chat.GetChatByIdAsync(chatId);
+            if (chat != null && userId == chat.SellerId || userId == chat.CustomerId)
+            {
+                await _chat.DeleteChatAsync(chatId);
+                return RedirectToAction("UserPage", "Identity", new { aria = "" });
+            }
+            return BadRequest();
+            
         }
     }
 }
