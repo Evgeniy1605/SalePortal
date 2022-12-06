@@ -41,5 +41,12 @@ namespace SalePortal.Controllers
             
             return RedirectToAction(nameof(Index), new {commodityId, customerId});
         }
+
+        [Authorize]
+        public async Task<IActionResult> CustomerChats(int userId)
+        {
+            var chats = await _chat.GetCustomersChatsAsync(userId);
+            return PartialView("_ChatsAsCustomer", chats);
+        }
     }
 }

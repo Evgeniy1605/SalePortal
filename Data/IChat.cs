@@ -15,7 +15,7 @@ namespace SalePortal.Data
         public Task AddMessageAsync(int chatId, int senderId, string message);
 
         public Task<ChatViewModel> GetChatViewModelAsync(int chatId);
-
+        public Task<List<ChatEntity>> GetCustomersChatsAsync(int userId);
 
 
     }
