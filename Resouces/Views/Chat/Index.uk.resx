@@ -117,31 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Add new" xml:space="preserve">
-    <value>Створити нове оголошення</value>
+  <data name="Delete chat" xml:space="preserve">
+    <value>Видалити чат</value>
   </data>
-  <data name="Email:" xml:space="preserve">
-    <value>Поштова адреса</value>
-  </data>
-  <data name="Phone number:" xml:space="preserve">
-    <value>Номер телефону:</value>
-  </data>
-  <data name="User page" xml:space="preserve">
-    <value>Ваша Сторінка</value>
-  </data>
-  <data name="Your adverts:" xml:space="preserve">
-    <value>Ваші оголошення:</value>
-  </data>
-  <data name="Your Chats as a Customer" xml:space="preserve">
-    <value>Ваші чати як клієнта</value>
-  </data>
-  <data name="Your Chats as a Seller" xml:space="preserve">
-    <value>Ваші чати як продавця</value>
-  </data>
-  <data name="Your orders" xml:space="preserve">
-    <value>Ваші замовлення</value>
-  </data>
-  <data name="Your sales" xml:space="preserve">
-    <value>Ваші продажі</value>
+  <data name="Send" xml:space="preserve">
+    <value>Надіслати</value>
   </data>
 </root>
