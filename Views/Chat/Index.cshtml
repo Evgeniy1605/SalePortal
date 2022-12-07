@@ -1,0 +1,38 @@
+﻿@model ChatViewModel;
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer;
+@inject SalePortal.Data.ILibrary _library;
+@{
+    int userId = _library.GetUserId(User.Claims.ToList());
+    string path = "~/Images/" + $"{Model.Chat.CommodityId}" + ".png";
+}
+<br />
+<table >
+    <tr>
+        <td><img src="@path" asp-append-version="true" width="50" /></td>
+        <td><p><b>@Model.Chat.Commodity.Name</b></p></td>
+        <td><p>Price:  <b>@Math.Round(Model.Chat.Commodity.Price,2) $</b></p></td>
+        <td><p>Seller:  <b>@Model.Chat.Commodity.Owner.Name @Model.Chat.Commodity.Owner.SurName </b></p></td>
+        <td><a class="btn btn-danger" asp-action="DeleteChat" asp-controller="Chat" asp-route-chatId="@Model.Chat.Id"><b>@localizer["Delete chat"]</b></a></td>
+    </tr>
+    
+</table>
+<div>
+    <br />
+    
+</div>
+
+<input id="chatId" type="hidden" value="@Model.Chat.Id" />
+<input id="userId" type="hidden" value="@userId" />
+<hr />
+<div id="chatroom">
+    @foreach (var item in Model.Messages)
+    {
+        <p>@item.Sender.Name: <b>@item.Message</b></p>
+    }
+</div>
+<div id="divChatInput" class="divChatInput">
+    <input id="chatInput" type="text" />
+    <button id="sendBtn" class="btn btn-primary">@localizer["Send"]</button>
+</div>
+<script src="~/js/signalr/dist/browser/signalr.min.js"></script>
+<script src="~/js/chatclientsitejsss.js"></script>
