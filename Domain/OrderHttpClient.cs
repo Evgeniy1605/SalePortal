@@ -92,9 +92,44 @@ namespace SalePortal.Domain
             }
         }
 
-        public Task PutOrderAsync(int orderId, CommodityOrderEntity order)
+        public async Task PutOrderAsync(int orderId, CommodityOrderEntity order)
         {
-            throw new NotImplementedException();
+            order.Commodity = null;
+            order.CommodityOwner= null;
+            order.Customer = null;
+
+            //
+            var postJson = JsonConvert.SerializeObject(order);
+            var content = new StringContent(postJson, Encoding.UTF8, "application/json");
+
+            var client = new HttpClient();
+            var uri = new Uri(Uri + "/" + orderId.ToString());
+            try
+            {
+                var reqest = new HttpRequestMessage()
+                {
+                    Method = HttpMethod.Put,
+                    RequestUri = uri,
+                    Content = content,
+                    Headers =
+                {
+                    {"ApiKey", Key }
+                }
+                };
+                using (var response = await client.SendAsync(reqest))
+                {
+                    response.EnsureSuccessStatusCode();
+                }
+
+            }
+            catch (Exception )
+            {
+
+            }
+            finally
+            {
+                client.Dispose();
+            }
         }
     }
 }

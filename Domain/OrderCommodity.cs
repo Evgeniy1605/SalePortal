@@ -35,13 +35,11 @@ namespace SalePortal.Domain
         public async Task ApproveOrderAsync(int orderId)
         {
 
-            //var order = await _context.CommodityOrders.SingleOrDefaultAsync(x => x.Id == orderId);
             var order = await _orderHttp.GetOrderByIdAsync(orderId);
             if (order != null)
             {
                 order.ApprovedByOwner = true;
-                _context.CommodityOrders.Update(order);
-                await _context.SaveChangesAsync();
+                await _orderHttp.PutOrderAsync(orderId, order);
             }
         }
 
