@@ -9,11 +9,13 @@ namespace SalePortal.Domain
         private readonly IUserHttpClient _userHttpClient;
         private readonly ICommodityHttpClient _commodityHttpClient;
         private readonly SalePortalDbConnection _context;
-        public OrderCommodity(IUserHttpClient userHttpClient, ICommodityHttpClient commodityHttpClient, SalePortalDbConnection context)
+        private readonly IOrderHttpClient _orderHttp;
+        public OrderCommodity(IUserHttpClient userHttpClient, ICommodityHttpClient commodityHttpClient, SalePortalDbConnection context, IOrderHttpClient orderHttp)
         {
-            _userHttpClient= userHttpClient;
-            _commodityHttpClient= commodityHttpClient;
-            _context= context;
+            _userHttpClient = userHttpClient;
+            _commodityHttpClient = commodityHttpClient;
+            _context = context;
+            _orderHttp = orderHttp;
         }
 
         public async Task AddOrderAsync(int commodityId, int customerId)
@@ -26,8 +28,7 @@ namespace SalePortal.Domain
             order.CommodityOwnerId = commodity.OwnerId;
             order.CommodityId = commodityId;
             var owner = await _userHttpClient.GetUserByIdAsync(commodity.OwnerId);
-            await _context.CommodityOrders.AddAsync(order);
-            await _context.SaveChangesAsync();
+            await _orderHttp.PostOrderAsync(order);
 
         }
 
