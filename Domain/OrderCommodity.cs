@@ -45,17 +45,19 @@ namespace SalePortal.Domain
 
         public async Task<CommodityOrderEntity> GetOrderAsync(int orderId)
         {
-            return await _context.CommodityOrders.Include(x => x.Commodity).Include(x => x.Customer).Include(x => x.CommodityOwner).SingleOrDefaultAsync(x => x.Id == orderId);
+            return await _orderHttp.GetOrderByIdAsync(orderId);
         }
 
         public async Task<List<CommodityOrderEntity>> GetOrdersAsync(int userId)
         {
-            return await _context.CommodityOrders.Include(x =>x.Commodity).Include(x => x.Customer).Include(x => x.CommodityOwner).Where(x => x.CustomerId == userId).ToListAsync();
+            var orders = await _orderHttp.GetOrdersAsync();
+            return orders.Where(x => x.CustomerId == userId).ToList();
         }
 
         public async Task<List<CommodityOrderEntity>> GetSalesAsync(int userId)
         {
-            return await _context.CommodityOrders.Include(x => x.Commodity).Include(x => x.Customer).Include(x => x.CommodityOwner).Where(x => x.CommodityOwnerId == userId).ToListAsync();
+            var orders = await _orderHttp.GetOrdersAsync();
+            return orders.Where(x => x.CommodityOwnerId == userId).ToList();
         }
 
         public async Task RemoveOrderAsync(int orderId)

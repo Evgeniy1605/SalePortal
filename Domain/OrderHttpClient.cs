@@ -48,9 +48,42 @@ namespace SalePortal.Domain
             finally { client.Dispose(); };
         }
 
-        public Task<List<CommodityOrderEntity>> GetOrdersAsync()
+        public async Task<List<CommodityOrderEntity>> GetOrdersAsync()
         {
-            throw new NotImplementedException();
+            string json;
+            var client = new HttpClient();
+            List<CommodityOrderEntity> result ;
+            try
+            {
+                var reqest = new HttpRequestMessage()
+                {
+                    Method = HttpMethod.Get,
+                    RequestUri = new Uri(Uri),
+                    Headers =
+                {
+                    { "ApiKey", Key }
+                }
+                };
+
+                using (var response = await client.SendAsync(reqest))
+                {
+                    response.EnsureSuccessStatusCode();
+                    json = await response.Content.ReadAsStringAsync();
+                }
+
+                result = JsonConvert.DeserializeObject<List<CommodityOrderEntity>>(json);
+            }
+            catch (Exception)
+            {
+
+                result = new List<CommodityOrderEntity>();
+            }
+            finally
+            {
+                client.Dispose();
+            }
+
+            return result;
         }
 
         public async Task PostOrderAsync(CommodityOrderEntity order)
