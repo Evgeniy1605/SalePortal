@@ -10,9 +10,35 @@ namespace SalePortal.Domain
     {
         private const string Key = "pgHlpp7QzFasHJx4w46fI5Uzi4RvtTwlEXpsarwrsf8872dsd";
         private const string Uri = "https://localhost:7165/api/Orders";
-        public Task DeleteOrderAsync(int orderId)
+        public async Task DeleteOrderAsync(int orderId)
         {
-            throw new NotImplementedException();
+            var client = new HttpClient();
+            var uri = new Uri(Uri + "/" + orderId.ToString());
+
+            try
+            {
+                var reqest = new HttpRequestMessage()
+                {
+                    Method = HttpMethod.Delete,
+                    RequestUri = uri,
+
+                    Headers =
+                {
+                    {"ApiKey", Key }
+                }
+                };
+                using (var response = await client.SendAsync(reqest))
+                {
+                    response.EnsureSuccessStatusCode();
+
+                }
+                
+            }
+            catch (Exception)
+            {
+                
+            }
+            finally { client.Dispose(); }
         }
 
         public async Task<CommodityOrderEntity> GetOrderByIdAsync(int id)

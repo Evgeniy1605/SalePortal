@@ -8,13 +8,11 @@ namespace SalePortal.Domain
     {
         private readonly IUserHttpClient _userHttpClient;
         private readonly ICommodityHttpClient _commodityHttpClient;
-        private readonly SalePortalDbConnection _context;
         private readonly IOrderHttpClient _orderHttp;
         public OrderCommodity(IUserHttpClient userHttpClient, ICommodityHttpClient commodityHttpClient, SalePortalDbConnection context, IOrderHttpClient orderHttp)
         {
             _userHttpClient = userHttpClient;
             _commodityHttpClient = commodityHttpClient;
-            _context = context;
             _orderHttp = orderHttp;
         }
 
@@ -62,22 +60,20 @@ namespace SalePortal.Domain
 
         public async Task RemoveOrderAsync(int orderId)
         {
-            var order = await _context.CommodityOrders.SingleOrDefaultAsync(x =>x.Id == orderId);
+            var order = await _orderHttp.GetOrderByIdAsync(orderId);
             if (order != null)
-            {
-                _context.CommodityOrders.Remove(order);
-                await _context.SaveChangesAsync();
+            { 
+                await _orderHttp.DeleteOrderAsync(orderId);
             }
         }
 
         public async Task UnApproveOrderAsync(int orderId)
         {
-            var order = await _context.CommodityOrders.SingleOrDefaultAsync(x => x.Id == orderId);
+            var order = await _orderHttp.GetOrderByIdAsync(orderId);
             if (order != null)
             {
                 order.ApprovedByOwner = false;
-                _context.CommodityOrders.Update(order);
-                await _context.SaveChangesAsync();
+                _orderHttp.PutOrderAsync(orderId, order);
             }
 
         }
