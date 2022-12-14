@@ -8,7 +8,7 @@ namespace SalePortal.Data
         public Task<ChatEntity> GetChatAsyncById(int chatId);
         public Task PostChatAsync(ChatEntity chat);
         public Task PutChatAsync(int cahtId, ChatEntity chat);
-        public Task DeleteChatAsync();
+        public Task DeleteChatAsync(int chatId);
 
     }
 }

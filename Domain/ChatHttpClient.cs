@@ -12,9 +12,37 @@ namespace SalePortal.Domain
         {
             _configuration= configuration;
         }
-        public Task DeleteChatAsync()
+        public async Task DeleteChatAsync(int chatId)
         {
-            throw new NotImplementedException();
+            string Uri = _configuration.GetSection("ApiUri").Value + "Chats";
+            string Key = _configuration.GetSection("ApiKey").Value;
+            var client = new HttpClient();
+            var uri = new Uri(Uri + "/" + chatId.ToString());
+
+            try
+            {
+                var reqest = new HttpRequestMessage()
+                {
+                    Method = HttpMethod.Delete,
+                    RequestUri = uri,
+
+                    Headers =
+                {
+                    {"ApiKey", Key }
+                }
+                };
+                using (var response = await client.SendAsync(reqest))
+                {
+                    response.EnsureSuccessStatusCode();
+
+                }
+
+            }
+            catch (Exception)
+            {
+                int x = 1;
+            }
+            finally { client.Dispose(); }
         }
 
         public async Task<ChatEntity> GetChatAsyncById(int chatId)

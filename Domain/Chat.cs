@@ -50,21 +50,11 @@ namespace SalePortal.Domain
 
         public async Task DeleteChatAsync(int chatId)
         {
-            var chat1 = await _chatHttp.GetChatAsyncById(chatId);
-            var messeges = await _context.Messages.Where(x => x.ChatId == chatId).ToListAsync();
-            if (messeges.Count !=0)
-            {
-                foreach (var item in messeges)
-                {
-                    _context.Messages.Remove(item);
-                    await _context.SaveChangesAsync();
-                }
-            }
-            var chat = await _context.Chats.SingleOrDefaultAsync(x => x.Id == chatId);
+            var chat = await _chatHttp.GetChatAsyncById(chatId);
+            
             if (chat != null)
             {
-                _context.Chats.Remove(chat);
-                await _context.SaveChangesAsync();
+                await _chatHttp.DeleteChatAsync(chatId);
             }
 
         }
