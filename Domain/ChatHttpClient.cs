@@ -80,9 +80,44 @@ namespace SalePortal.Domain
             finally { client.Dispose(); };
         }
 
-        public Task<List<ChatEntity>> GetChatsAsync()
+        public async Task<List<ChatEntity>> GetChatsAsync()
         {
-            throw new NotImplementedException();
+            string Uri = _configuration.GetSection("ApiUri").Value + "Chats";
+            string Key = _configuration.GetSection("ApiKey").Value;
+            string json;
+            var client = new HttpClient();
+            List<ChatEntity> result;
+            try
+            {
+                var reqest = new HttpRequestMessage()
+                {
+                    Method = HttpMethod.Get,
+                    RequestUri = new Uri(Uri),
+                    Headers =
+                {
+                    { "ApiKey", Key }
+                }
+                };
+
+                using (var response = await client.SendAsync(reqest))
+                {
+                    response.EnsureSuccessStatusCode();
+                    json = await response.Content.ReadAsStringAsync();
+                }
+
+                result = JsonConvert.DeserializeObject<List<ChatEntity>>(json);
+            }
+            catch (Exception)
+            {
+
+                result = new List<ChatEntity>();
+            }
+            finally
+            {
+                client.Dispose();
+            }
+
+            return result;
         }
 
         public Task<MessageEntity> GetMessageAsyncById(int messageId)

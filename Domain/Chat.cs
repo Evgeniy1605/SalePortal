@@ -66,7 +66,8 @@ namespace SalePortal.Domain
 
         public async Task<ChatEntity> GetChatByCustomerIdSellerIdAsync(int customerId, int sellerId)
         {
-            return await _context.Chats.SingleOrDefaultAsync(x => x.CustomerId == customerId && x.SellerId == sellerId);
+            var chats = await _chatHttp.GetChatsAsync();
+            return chats.SingleOrDefault(x => x.CustomerId == customerId && x.SellerId == sellerId);
         }
 
         public async Task<ChatEntity> GetChatByIdAsync(int chatId)
