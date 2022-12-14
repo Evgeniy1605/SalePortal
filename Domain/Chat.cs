@@ -2,6 +2,7 @@
 using SalePortal.Data;
 using SalePortal.Entities;
 using SalePortal.Models;
+using System.Linq;
 
 namespace SalePortal.Domain
 {
@@ -72,20 +73,22 @@ namespace SalePortal.Domain
 
         public async Task<ChatEntity> GetChatByIdAsync(int chatId)
         {
-            return await _context.Chats.SingleOrDefaultAsync(x => x.Id == chatId);
+
+            return await _chatHttp.GetChatAsyncById(chatId);
         }
 
         public async Task<ChatViewModel> GetChatViewModelAsync(int chatId)
         {
             ChatViewModel chatView = new ChatViewModel();
-            var chat = await _context.Chats.Include(x =>x.Commodity).Include(x => x.Seller).SingleOrDefaultAsync(x => x.Id == chatId);
+            var chat = await _chatHttp.GetChatAsyncById(chatId);
             if (chat == null)
             {
                 return chatView;
             }
-            var messeges = await _context.Messages.Include(x => x.Sender).Where(x => x.ChatId == chatId).ToListAsync();
+
+            var messeges = await _messageHttp.GetMessagesAsync();
             chatView.Chat = chat;
-            chatView.Messages = messeges;
+            chatView.Messages = messeges.Where(x => x.ChatId == chatId).ToList();
             return chatView;
         }
 
