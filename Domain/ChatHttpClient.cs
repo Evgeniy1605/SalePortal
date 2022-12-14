@@ -37,9 +37,44 @@ namespace SalePortal.Domain
             throw new NotImplementedException();
         }
 
-        public Task PostChatAsync(ChatEntity chat)
+        public async Task PostChatAsync(ChatEntity chat)
         {
-            throw new NotImplementedException();
+            string Uri = _configuration.GetSection("ApiUri").Value + "Chats";
+            string Key = _configuration.GetSection("ApiKey").Value;
+            var postJson = JsonConvert.SerializeObject(chat);
+            var content = new StringContent(postJson, Encoding.UTF8, "application/json");
+
+            var client = new HttpClient();
+            var uri = new Uri(Uri);
+            try
+            {
+                var reqest = new HttpRequestMessage()
+                {
+                    Method = HttpMethod.Post,
+                    RequestUri = uri,
+                    Content = content,
+                    Headers =
+                {
+                    {"ApiKey", Key }
+                }
+                };
+                using (var response = await client.SendAsync(reqest))
+                {
+                    response.EnsureSuccessStatusCode();
+                    var body = await response.Content.ReadAsStringAsync();
+
+                }
+
+
+            }
+            catch (Exception)
+            {
+
+            }
+            finally
+            {
+                client.Dispose();
+            }
         }
 
         public async Task PostMessageAsync(MessageEntity message)

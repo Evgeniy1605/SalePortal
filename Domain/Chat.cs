@@ -30,8 +30,6 @@ namespace SalePortal.Domain
                 Message = message,
                 Date = DateTime.Now
             };
-            /*await _context.Messages.AddAsync(messageEntity);
-            await _context.SaveChangesAsync();*/
             await _messageHttp.PostMessageAsync(messageEntity);
         }
 
@@ -43,14 +41,11 @@ namespace SalePortal.Domain
             ChatEntity chat = new ChatEntity() 
             { 
                 CustomerId = customerId,
-                //Customer = custumer,
                 SellerId = seller.Id,
-                //Seller = seller,
-                CommodityId = commodityId//,
-                //Commodity = commoduty
+                CommodityId = commodityId
             };
-            await _context.Chats.AddAsync(chat);
-            await _context.SaveChangesAsync();
+            
+            await _chatHttp.PostChatAsync(chat);
         }
 
         public async Task DeleteChatAsync(int chatId)
