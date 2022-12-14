@@ -44,6 +44,9 @@ public static class ServicesRegistration
         });
         services.AddSignalR();
         services.AddTransient<IOrderHttpClient, OrderHttpClient>();
+        services.AddTransient<IMessageHttpClient, ChatHttpClient>();
+        services.AddTransient<IChatHttpClient, ChatHttpClient>();
+
 
         return services;
     }

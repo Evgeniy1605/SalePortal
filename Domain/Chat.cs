@@ -10,11 +10,15 @@ namespace SalePortal.Domain
         private readonly SalePortalDbConnection _context;
         private readonly ICommodityHttpClient _httpClientCommodity;
         private readonly IUserHttpClient _userHttp;
-        public Chat(SalePortalDbConnection context, ICommodityHttpClient httpClientCommodity, IUserHttpClient userHttp)
+        private readonly IMessageHttpClient _messageHttp;
+        private readonly IChatHttpClient _chatHttp;
+        public Chat(SalePortalDbConnection context, ICommodityHttpClient httpClientCommodity, IUserHttpClient userHttp, IMessageHttpClient messageHttp, IChatHttpClient chatHttp)
         {
             _context = context;
             _httpClientCommodity = httpClientCommodity;
             _userHttp = userHttp;
+            _messageHttp = messageHttp;
+            _chatHttp = chatHttp;
         }
 
         public async Task AddMessageAsync(int chatId, int senderId, string message)
@@ -26,8 +30,9 @@ namespace SalePortal.Domain
                 Message = message,
                 Date = DateTime.Now
             };
-            await _context.Messages.AddAsync(messageEntity);
-            await _context.SaveChangesAsync();
+            /*await _context.Messages.AddAsync(messageEntity);
+            await _context.SaveChangesAsync();*/
+            await _messageHttp.PostMessageAsync(messageEntity);
         }
 
         public async Task CreateChatAsync(int customerId, int commodityId)
