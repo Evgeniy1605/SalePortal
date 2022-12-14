@@ -8,10 +8,16 @@ namespace SalePortal.Domain
 {
     public class OrderHttpClient : IOrderHttpClient
     {
-        private const string Key = "pgHlpp7QzFasHJx4w46fI5Uzi4RvtTwlEXpsarwrsf8872dsd";
-        private const string Uri = "https://localhost:7165/api/Orders";
+        private readonly IConfiguration _configuration;
+        public OrderHttpClient(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public async Task DeleteOrderAsync(int orderId)
         {
+            string Uri = _configuration.GetSection("ApiUri").Value + "Orders";
+            string Key = _configuration.GetSection("ApiKey").Value;
             var client = new HttpClient();
             var uri = new Uri(Uri + "/" + orderId.ToString());
 
@@ -43,6 +49,8 @@ namespace SalePortal.Domain
 
         public async Task<CommodityOrderEntity> GetOrderByIdAsync(int id)
         {
+            string Uri = _configuration.GetSection("ApiUri").Value + "Orders";
+            string Key = _configuration.GetSection("ApiKey").Value;
             string json;
             var client = new HttpClient();
             CommodityOrderEntity result;
@@ -76,6 +84,8 @@ namespace SalePortal.Domain
 
         public async Task<List<CommodityOrderEntity>> GetOrdersAsync()
         {
+            string Uri = _configuration.GetSection("ApiUri").Value + "Orders";
+            string Key = _configuration.GetSection("ApiKey").Value;
             string json;
             var client = new HttpClient();
             List<CommodityOrderEntity> result ;
@@ -114,7 +124,8 @@ namespace SalePortal.Domain
 
         public async Task PostOrderAsync(CommodityOrderEntity order)
         {
-            
+            string Uri = _configuration.GetSection("ApiUri").Value + "Orders";
+            string Key = _configuration.GetSection("ApiKey").Value;
             var postJson = JsonConvert.SerializeObject(order);
             var content = new StringContent(postJson, Encoding.UTF8, "application/json");
 
@@ -153,6 +164,8 @@ namespace SalePortal.Domain
 
         public async Task PutOrderAsync(int orderId, CommodityOrderEntity order)
         {
+            string Uri = _configuration.GetSection("ApiUri").Value + "Orders";
+            string Key = _configuration.GetSection("ApiKey").Value;
             order.Commodity = null;
             order.CommodityOwner= null;
             order.Customer = null;

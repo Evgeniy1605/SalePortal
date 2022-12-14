@@ -7,10 +7,16 @@ namespace SalePortal.Domain
 {
     public class CategoryHttpClient : ICategoryHttpClient
     {
-        private const string Key = "pgHlpp7QzFasHJx4w46fI5Uzi4RvtTwlEXpsarwrsf8872dsd";
-        private const string Uri = "https://localhost:7165/api/Categories";
+        private readonly IConfiguration _configuration;
+        public CategoryHttpClient(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public async Task<bool> DeleteCategoryAsync(int categoryId)
         {
+            string Uri = _configuration.GetSection("ApiUri").Value + "Categories";
+            string Key = _configuration.GetSection("ApiKey").Value;
             var client = new HttpClient();
             var uri = new Uri(Uri + "/" + categoryId.ToString());
 
@@ -42,6 +48,8 @@ namespace SalePortal.Domain
 
         public async Task<List<CategoryEntity>> GetCategoriesAsync()
         {
+            string Uri = _configuration.GetSection("ApiUri").Value + "Categories";
+            string Key = _configuration.GetSection("ApiKey").Value;
             string json;
             var client = new HttpClient();
             List<CategoryEntity> result  = new List<CategoryEntity>();
@@ -81,6 +89,8 @@ namespace SalePortal.Domain
 
         public async Task<CategoryEntity> GetCategoryByIdAsync(int id)
         {
+            string Uri = _configuration.GetSection("ApiUri").Value + "Categories";
+            string Key = _configuration.GetSection("ApiKey").Value;
             string json;
             var client = new HttpClient();
             CategoryEntity result;
@@ -114,6 +124,8 @@ namespace SalePortal.Domain
 
         public async Task<bool> PostCategoryAsync(CategoryEntity category)
         {
+            string Uri = _configuration.GetSection("ApiUri").Value + "Categories";
+            string Key = _configuration.GetSection("ApiKey").Value;
             var postJson = JsonConvert.SerializeObject(category);
             var content = new StringContent(postJson, Encoding.UTF8, "application/json");
 
@@ -151,6 +163,8 @@ namespace SalePortal.Domain
 
         public async Task<bool> PutCategoryAsync(int categoryId, CategoryEntity category)
         {
+            string Uri = _configuration.GetSection("ApiUri").Value + "Categories";
+            string Key = _configuration.GetSection("ApiKey").Value;
             var postJson = JsonConvert.SerializeObject(category);
             var content = new StringContent(postJson, Encoding.UTF8, "application/json");
 
