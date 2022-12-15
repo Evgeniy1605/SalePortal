@@ -15,13 +15,11 @@ namespace SalePortal.Domain;
 
 public class IdentityLibrary : IIdentityLibrary
 {
-    private readonly SalePortalDbConnection _context;
     private readonly IMapper _mapper;
     private readonly IUserHttpClient _userHttp;
     private readonly IAdmins _admins;
-    public IdentityLibrary(SalePortalDbConnection context, IMapper mapper, IUserHttpClient userHttp, IAdmins admins)
+    public IdentityLibrary(IMapper mapper, IUserHttpClient userHttp, IAdmins admins)
     {
-        _context = context;
         _mapper = mapper;
         _userHttp = userHttp;
         _admins = admins;
@@ -34,7 +32,7 @@ public class IdentityLibrary : IIdentityLibrary
         var admins =  _admins.GetAdmins();
         var users =  _userHttp.GetUsers();
         var expectedUser = users.SingleOrDefault(x => x.Name == username && x.Password == password);
-        var expectedAdmin = _context.admins.SingleOrDefault(x => x.Name == username && x.Password == password);
+        var expectedAdmin = admins.SingleOrDefault(x => x.Name == username && x.Password == password);
 
         if (expectedUser != null)
         {
