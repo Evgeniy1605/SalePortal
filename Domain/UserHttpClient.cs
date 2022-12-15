@@ -199,9 +199,46 @@ public class UserHttpClient : IUserHttpClient, IAdmins
         }
     }
 
-    public Task<List<AdminEntity>> GetAdminsAsync()
+    public  List<AdminEntity> GetAdmins()
     {
-        throw new NotImplementedException();
+        string Uri = _configuration.GetSection("ApiUri").Value + "Admins";
+        string Key = _configuration.GetSection("ApiKey").Value;
+        
+        string json;
+        var client = new HttpClient();
+        List<AdminEntity> result = new List<AdminEntity>();
+        try
+        {
+            var reqest = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(Uri),
+                Headers =
+                {
+                    { "ApiKey", Key }
+                }
+            };
+
+            using (var response = client.Send(reqest))
+            {
+                response.EnsureSuccessStatusCode();
+                json = response.Content.ReadAsStringAsync().Result;
+
+            }
+
+            result = JsonConvert.DeserializeObject<List<AdminEntity>>(json);
+        }
+        catch (Exception)
+        {
+
+
+            return result;
+        }
+        finally
+        {
+            client.Dispose();
+        }
+        return result;
     }
 }
 

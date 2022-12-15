@@ -9,6 +9,7 @@ using SalePortal.Models;
 using NuGet.LibraryModel;
 using SalePortal.Data;
 using SalePortal.Entities;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 
 namespace SalePortal.Domain;
 
@@ -17,17 +18,20 @@ public class IdentityLibrary : IIdentityLibrary
     private readonly SalePortalDbConnection _context;
     private readonly IMapper _mapper;
     private readonly IUserHttpClient _userHttp;
-    public IdentityLibrary(SalePortalDbConnection context, IMapper mapper, IUserHttpClient userHttp)
+    private readonly IAdmins _admins;
+    public IdentityLibrary(SalePortalDbConnection context, IMapper mapper, IUserHttpClient userHttp, IAdmins admins)
     {
         _context = context;
         _mapper = mapper;
         _userHttp = userHttp;
+        _admins = admins;
     }
 
-    public  ClaimsPrincipal ValidateUserData(string username, string password)
+    public   ClaimsPrincipal ValidateUserData(string username, string password)
     {
         password = ToHashPassword(password);
         //
+        var admins =  _admins.GetAdmins();
         var users =  _userHttp.GetUsers();
         var expectedUser = users.SingleOrDefault(x => x.Name == username && x.Password == password);
         var expectedAdmin = _context.admins.SingleOrDefault(x => x.Name == username && x.Password == password);

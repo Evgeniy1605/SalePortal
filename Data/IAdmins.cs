@@ -4,6 +4,6 @@ namespace SalePortal.Data
 {
     public interface IAdmins
     {
-        public Task<List<AdminEntity>> GetAdminsAsync();
+        public List<AdminEntity> GetAdmins();
     }
 }
