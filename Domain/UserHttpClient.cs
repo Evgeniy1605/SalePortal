@@ -6,7 +6,7 @@ using System.Text;
 
 namespace SalePortal.Domain;
 
-public class UserHttpClient : IUserHttpClient
+public class UserHttpClient : IUserHttpClient, IAdmins
 {
 
     private readonly IConfiguration _configuration;
@@ -197,6 +197,11 @@ public class UserHttpClient : IUserHttpClient
         {
             client.Dispose();
         }
+    }
+
+    public Task<List<AdminEntity>> GetAdminsAsync()
+    {
+        throw new NotImplementedException();
     }
 }
 

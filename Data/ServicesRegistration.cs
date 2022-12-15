@@ -46,7 +46,7 @@ public static class ServicesRegistration
         services.AddTransient<IOrderHttpClient, OrderHttpClient>();
         services.AddTransient<IMessageHttpClient, ChatHttpClient>();
         services.AddTransient<IChatHttpClient, ChatHttpClient>();
-
+        services.AddTransient<IAdmins, UserHttpClient>();
 
         return services;
     }
