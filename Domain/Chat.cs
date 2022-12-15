@@ -8,14 +8,13 @@ namespace SalePortal.Domain
 {
     public class Chat : IChat
     {
-        private readonly SalePortalDbConnection _context;
+
         private readonly ICommodityHttpClient _httpClientCommodity;
         private readonly IUserHttpClient _userHttp;
         private readonly IMessageHttpClient _messageHttp;
         private readonly IChatHttpClient _chatHttp;
-        public Chat(SalePortalDbConnection context, ICommodityHttpClient httpClientCommodity, IUserHttpClient userHttp, IMessageHttpClient messageHttp, IChatHttpClient chatHttp)
+        public Chat(ICommodityHttpClient httpClientCommodity, IUserHttpClient userHttp, IMessageHttpClient messageHttp, IChatHttpClient chatHttp)
         {
-            _context = context;
             _httpClientCommodity = httpClientCommodity;
             _userHttp = userHttp;
             _messageHttp = messageHttp;
@@ -94,10 +93,10 @@ namespace SalePortal.Domain
 
         public async Task<List<ChatEntity>> GetCustomersChatsAsync(int userId)
         {
-            return await _context.Chats
-                .Include(x => x.Commodity)
+            var chats = await _chatHttp.GetChatsAsync();
+            return chats
                 .Where(x => x.CustomerId == userId)
-                .ToListAsync();
+                .ToList();
         }
 
         public Task<List<MessageEntity>> GetMessagesByChatIdAsync(int chatId)
@@ -107,10 +106,10 @@ namespace SalePortal.Domain
 
         public async Task<List<ChatEntity>> GetSellersChatsAsync(int userId)
         {
-            return await _context.Chats
-                .Include(x => x.Commodity)
+            var chats = await _chatHttp.GetChatsAsync();
+            return chats
                 .Where(x => x.SellerId == userId)
-                .ToListAsync();
+                .ToList();
         }
     }
 }
