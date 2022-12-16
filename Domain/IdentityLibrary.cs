@@ -77,8 +77,6 @@ public class IdentityLibrary : IIdentityLibrary
     {
         inputUser.Password = ToHashPassword(inputUser.Password);
         UserEntity user = _mapper.Map<UserEntity>(inputUser);
-        /*await _context.Users.AddAsync(user);
-        await _context.SaveChangesAsync();*/
         await _userHttp.PostUserAsync(user);
         
     }

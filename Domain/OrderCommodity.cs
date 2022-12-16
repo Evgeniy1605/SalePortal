@@ -8,12 +8,12 @@ namespace SalePortal.Domain
     {
         private readonly IUserHttpClient _userHttpClient;
         private readonly ICommodityHttpClient _commodityHttpClient;
-        private readonly SalePortalDbConnection _context;
-        public OrderCommodity(IUserHttpClient userHttpClient, ICommodityHttpClient commodityHttpClient, SalePortalDbConnection context)
+        private readonly IOrderHttpClient _orderHttp;
+        public OrderCommodity(IUserHttpClient userHttpClient, ICommodityHttpClient commodityHttpClient, SalePortalDbConnection context, IOrderHttpClient orderHttp)
         {
-            _userHttpClient= userHttpClient;
-            _commodityHttpClient= commodityHttpClient;
-            _context= context;
+            _userHttpClient = userHttpClient;
+            _commodityHttpClient = commodityHttpClient;
+            _orderHttp = orderHttp;
         }
 
         public async Task AddOrderAsync(int commodityId, int customerId)
@@ -26,56 +26,54 @@ namespace SalePortal.Domain
             order.CommodityOwnerId = commodity.OwnerId;
             order.CommodityId = commodityId;
             var owner = await _userHttpClient.GetUserByIdAsync(commodity.OwnerId);
-            await _context.CommodityOrders.AddAsync(order);
-            await _context.SaveChangesAsync();
+            await _orderHttp.PostOrderAsync(order);
 
         }
 
         public async Task ApproveOrderAsync(int orderId)
         {
 
-            var order = await _context.CommodityOrders.SingleOrDefaultAsync(x => x.Id == orderId);
+            var order = await _orderHttp.GetOrderByIdAsync(orderId);
             if (order != null)
             {
                 order.ApprovedByOwner = true;
-                _context.CommodityOrders.Update(order);
-                await _context.SaveChangesAsync();
+                await _orderHttp.PutOrderAsync(orderId, order);
             }
         }
 
         public async Task<CommodityOrderEntity> GetOrderAsync(int orderId)
         {
-            return await _context.CommodityOrders.Include(x => x.Commodity).Include(x => x.Customer).Include(x => x.CommodityOwner).SingleOrDefaultAsync(x => x.Id == orderId);
+            return await _orderHttp.GetOrderByIdAsync(orderId);
         }
 
         public async Task<List<CommodityOrderEntity>> GetOrdersAsync(int userId)
         {
-            return await _context.CommodityOrders.Include(x =>x.Commodity).Include(x => x.Customer).Include(x => x.CommodityOwner).Where(x => x.CustomerId == userId).ToListAsync();
+            var orders = await _orderHttp.GetOrdersAsync();
+            return orders.Where(x => x.CustomerId == userId).ToList();
         }
 
         public async Task<List<CommodityOrderEntity>> GetSalesAsync(int userId)
         {
-            return await _context.CommodityOrders.Include(x => x.Commodity).Include(x => x.Customer).Include(x => x.CommodityOwner).Where(x => x.CommodityOwnerId == userId).ToListAsync();
+            var orders = await _orderHttp.GetOrdersAsync();
+            return orders.Where(x => x.CommodityOwnerId == userId).ToList();
         }
 
         public async Task RemoveOrderAsync(int orderId)
         {
-            var order = await _context.CommodityOrders.SingleOrDefaultAsync(x =>x.Id == orderId);
+            var order = await _orderHttp.GetOrderByIdAsync(orderId);
             if (order != null)
-            {
-                _context.CommodityOrders.Remove(order);
-                await _context.SaveChangesAsync();
+            { 
+                await _orderHttp.DeleteOrderAsync(orderId);
             }
         }
 
         public async Task UnApproveOrderAsync(int orderId)
         {
-            var order = await _context.CommodityOrders.SingleOrDefaultAsync(x => x.Id == orderId);
+            var order = await _orderHttp.GetOrderByIdAsync(orderId);
             if (order != null)
             {
                 order.ApprovedByOwner = false;
-                _context.CommodityOrders.Update(order);
-                await _context.SaveChangesAsync();
+                _orderHttp.PutOrderAsync(orderId, order);
             }
 
         }

@@ -9,17 +9,19 @@ namespace SalePortal.Domain
 {
     public class CommodityHttpClient : ICommodityHttpClient
     {
-        private const string Key = "pgHlpp7QzFasHJx4w46fI5Uzi4RvtTwlEXpsarwrsf8872dsd";
-        private readonly SalePortalDbConnection _context;
-        private const string Uri = "https://localhost:7165/api/Commodities";
         private readonly IUserHttpClient _userHttp;
-        public CommodityHttpClient(SalePortalDbConnection context, IUserHttpClient userHttp)
+        private readonly IConfiguration _configuration;
+        private readonly ICategoryHttpClient _categoryHttp;
+        public CommodityHttpClient(IUserHttpClient userHttp, IConfiguration configuration, ICategoryHttpClient categoryHttp)
         {
-            _context = context;
             _userHttp = userHttp;
+            _configuration = configuration;
+            _categoryHttp = categoryHttp;
         }
         public  async Task<List<CommodityEntity>> GetCommoditiesAsync()
         {
+            string Uri = _configuration.GetSection("ApiUri").Value + "Commodities";
+            string Key = _configuration.GetSection("ApiKey").Value;
             string json;
             var client = new HttpClient();
             List<CommodityEntity> result;
@@ -58,9 +60,10 @@ namespace SalePortal.Domain
 
         public async Task<bool> PostCommoditiesAsync(CommodityEntity commodity, int userId)
         {
-            
+            string Uri = _configuration.GetSection("ApiUri").Value + "Commodities";
+            string Key = _configuration.GetSection("ApiKey").Value;
             var owner = await _userHttp.GetUserByIdAsync(userId);
-            var type = await _context.Categories.SingleOrDefaultAsync(x => x.Id == commodity.TypeId);
+            var type = await _categoryHttp.GetCategoryByIdAsync(commodity.TypeId);
 
             if (owner == null || type == null )
             {
@@ -110,6 +113,8 @@ namespace SalePortal.Domain
 
         public async Task<bool> DeleteCommodityAsync(int CommodityId)
         {
+            string Uri = _configuration.GetSection("ApiUri").Value + "Commodities";
+            string Key = _configuration.GetSection("ApiKey").Value;
             var client = new HttpClient();
             var uri = new Uri(Uri + "/" + CommodityId.ToString());
 
@@ -141,6 +146,8 @@ namespace SalePortal.Domain
 
         public async Task<CommodityEntity> GetCommodityByIdAsync(int? id)
         {
+            string Uri = _configuration.GetSection("ApiUri").Value + "Commodities";
+            string Key = _configuration.GetSection("ApiKey").Value;
             string json;
             var client = new HttpClient();
             CommodityEntity result;
@@ -174,8 +181,10 @@ namespace SalePortal.Domain
 
         public async Task<bool> PutCommodityAsync(int commodityId, int userId, CommodityEntity commodity)
         {
-            var owner = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId);
-            var type = await _context.Categories.SingleOrDefaultAsync(x => x.Id == commodity.TypeId);
+            string Uri = _configuration.GetSection("ApiUri").Value + "Commodities";
+            string Key = _configuration.GetSection("ApiKey").Value;
+            var owner = await _userHttp.GetUserByIdAsync(userId);
+            var type = await _categoryHttp.GetCategoryByIdAsync(commodity.TypeId);
 
             if (owner == null || type == null)
             {

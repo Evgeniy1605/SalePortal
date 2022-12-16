@@ -1,24 +1,25 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SalePortal.Data;
 using SalePortal.Entities;
 using System.Text;
 
 namespace SalePortal.Domain
 {
-    public class CategoryHttpClient : ICategoryHttpClient
+    public class OrderHttpClient : IOrderHttpClient
     {
         private readonly IConfiguration _configuration;
-        public CategoryHttpClient(IConfiguration configuration)
+        public OrderHttpClient(IConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-        public async Task<bool> DeleteCategoryAsync(int categoryId)
+        public async Task DeleteOrderAsync(int orderId)
         {
-            string Uri = _configuration.GetSection("ApiUri").Value + "Categories";
+            string Uri = _configuration.GetSection("ApiUri").Value + "Orders";
             string Key = _configuration.GetSection("ApiKey").Value;
             var client = new HttpClient();
-            var uri = new Uri(Uri + "/" + categoryId.ToString());
+            var uri = new Uri(Uri + "/" + orderId.ToString());
 
             try
             {
@@ -37,22 +38,57 @@ namespace SalePortal.Domain
                     response.EnsureSuccessStatusCode();
 
                 }
-                return true;
+                
             }
             catch (Exception)
             {
-                return false;
+                
             }
             finally { client.Dispose(); }
         }
 
-        public async Task<List<CategoryEntity>> GetCategoriesAsync()
+        public async Task<CommodityOrderEntity> GetOrderByIdAsync(int id)
         {
-            string Uri = _configuration.GetSection("ApiUri").Value + "Categories";
+            string Uri = _configuration.GetSection("ApiUri").Value + "Orders";
             string Key = _configuration.GetSection("ApiKey").Value;
             string json;
             var client = new HttpClient();
-            List<CategoryEntity> result  = new List<CategoryEntity>();
+            CommodityOrderEntity result;
+            try
+            {
+                var reqest = new HttpRequestMessage()
+                {
+                    Method = HttpMethod.Get,
+                    RequestUri = new Uri(Uri + "/" + id.ToString()),
+                    Headers =
+                {
+                    { "ApiKey", Key }
+                }
+                };
+
+                using (var response = await client.SendAsync(reqest))
+                {
+                    response.EnsureSuccessStatusCode();
+                    json = await response.Content.ReadAsStringAsync();
+                }
+                result = JsonConvert.DeserializeObject<CommodityOrderEntity>(json);
+                return result;
+            }
+            catch (Exception)
+            {
+                result = new CommodityOrderEntity();
+                return result;
+            }
+            finally { client.Dispose(); };
+        }
+
+        public async Task<List<CommodityOrderEntity>> GetOrdersAsync()
+        {
+            string Uri = _configuration.GetSection("ApiUri").Value + "Orders";
+            string Key = _configuration.GetSection("ApiKey").Value;
+            string json;
+            var client = new HttpClient();
+            List<CommodityOrderEntity> result ;
             try
             {
                 var reqest = new HttpRequestMessage()
@@ -71,62 +107,26 @@ namespace SalePortal.Domain
                     json = await response.Content.ReadAsStringAsync();
                 }
 
-                result = JsonConvert.DeserializeObject<List<CategoryEntity>>(json);
+                result = JsonConvert.DeserializeObject<List<CommodityOrderEntity>>(json);
             }
             catch (Exception)
             {
 
-                
-                return result;
+                result = new List<CommodityOrderEntity>();
             }
             finally
             {
                 client.Dispose();
             }
+
             return result;
-
         }
 
-        public async Task<CategoryEntity> GetCategoryByIdAsync(int id)
+        public async Task PostOrderAsync(CommodityOrderEntity order)
         {
-            string Uri = _configuration.GetSection("ApiUri").Value + "Categories";
+            string Uri = _configuration.GetSection("ApiUri").Value + "Orders";
             string Key = _configuration.GetSection("ApiKey").Value;
-            string json;
-            var client = new HttpClient();
-            CategoryEntity result;
-            try
-            {
-                var reqest = new HttpRequestMessage()
-                {
-                    Method = HttpMethod.Get,
-                    RequestUri = new Uri(Uri + "/" + id.ToString()),
-                    Headers =
-                {
-                    { "ApiKey", Key }
-                }
-                };
-
-                using (var response = await client.SendAsync(reqest))
-                {
-                    response.EnsureSuccessStatusCode();
-                    json = await response.Content.ReadAsStringAsync();
-                }
-                result = JsonConvert.DeserializeObject<CategoryEntity>(json);
-                return result;
-            }
-            catch (Exception)
-            {
-                result = new CategoryEntity();
-                return result;
-            }
-            finally { client.Dispose(); };
-        }
-
-        public async Task<bool> PostCategoryAsync(CategoryEntity category)
-        {
-            string Uri = _configuration.GetSection("ApiUri").Value + "Categories";
-            string Key = _configuration.GetSection("ApiKey").Value;
-            var postJson = JsonConvert.SerializeObject(category);
+            var postJson = JsonConvert.SerializeObject(order);
             var content = new StringContent(postJson, Encoding.UTF8, "application/json");
 
             var client = new HttpClient();
@@ -146,14 +146,15 @@ namespace SalePortal.Domain
                 using (var response = await client.SendAsync(reqest))
                 {
                     response.EnsureSuccessStatusCode();
+                    var body = await response.Content.ReadAsStringAsync();
 
                 }
-                return true;
+                
 
             }
             catch (Exception)
             {
-                return false;
+
             }
             finally
             {
@@ -161,15 +162,20 @@ namespace SalePortal.Domain
             }
         }
 
-        public async Task<bool> PutCategoryAsync(int categoryId, CategoryEntity category)
+        public async Task PutOrderAsync(int orderId, CommodityOrderEntity order)
         {
-            string Uri = _configuration.GetSection("ApiUri").Value + "Categories";
+            string Uri = _configuration.GetSection("ApiUri").Value + "Orders";
             string Key = _configuration.GetSection("ApiKey").Value;
-            var postJson = JsonConvert.SerializeObject(category);
+            order.Commodity = null;
+            order.CommodityOwner= null;
+            order.Customer = null;
+
+            //
+            var postJson = JsonConvert.SerializeObject(order);
             var content = new StringContent(postJson, Encoding.UTF8, "application/json");
 
             var client = new HttpClient();
-            var uri = new Uri(Uri + "/" + categoryId.ToString());
+            var uri = new Uri(Uri + "/" + orderId.ToString());
             try
             {
                 var reqest = new HttpRequestMessage()
@@ -186,13 +192,11 @@ namespace SalePortal.Domain
                 {
                     response.EnsureSuccessStatusCode();
                 }
-                return true;
 
             }
-            catch (Exception)
+            catch (Exception )
             {
 
-                return false;
             }
             finally
             {

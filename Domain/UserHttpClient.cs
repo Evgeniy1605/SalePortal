@@ -8,11 +8,17 @@ namespace SalePortal.Domain;
 
 public class UserHttpClient : IUserHttpClient
 {
-    private const string Key = "pgHlpp7QzFasHJx4w46fI5Uzi4RvtTwlEXpsarwrsf8872dsd";
-    private const string Uri = "https://localhost:7165/api/User";
+
+    private readonly IConfiguration _configuration;
+    public UserHttpClient(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
 
     public async Task<UserEntity> GetUserByIdAsync(int id)
     {
+        string Uri = _configuration.GetSection("ApiUri").Value + "User";
+        string Key = _configuration.GetSection("ApiKey").Value;
         string json;
         var client = new HttpClient();
         UserEntity result;
@@ -45,6 +51,8 @@ public class UserHttpClient : IUserHttpClient
     }
     public  List<UserEntity> GetUsers()
     {
+        string Uri = _configuration.GetSection("ApiUri").Value + "User";
+        string Key = _configuration.GetSection("ApiKey").Value;
         string json;
         var client = new HttpClient();
         List<UserEntity> result = new List<UserEntity>();
@@ -83,6 +91,8 @@ public class UserHttpClient : IUserHttpClient
     }
     public async Task PostUserAsync(UserEntity user)
     {
+        string Uri = _configuration.GetSection("ApiUri").Value + "User";
+        string Key = _configuration.GetSection("ApiKey").Value;
         var postJson = JsonConvert.SerializeObject(user);
         var content = new StringContent(postJson, Encoding.UTF8, "application/json");
 
@@ -119,6 +129,8 @@ public class UserHttpClient : IUserHttpClient
 
     public async Task<bool> DeleteUserAsync(int userId)
     {
+        string Uri = _configuration.GetSection("ApiUri").Value + "User";
+        string Key = _configuration.GetSection("ApiKey").Value;
         var client = new HttpClient();
         var uri = new Uri(Uri + "/" + userId.ToString());
 
@@ -150,6 +162,8 @@ public class UserHttpClient : IUserHttpClient
 
     public async Task<bool> PutUserAsync(int userId, UserEntity user)
     {
+        string Uri = _configuration.GetSection("ApiUri").Value + "User";
+        string Key = _configuration.GetSection("ApiKey").Value;
         var postJson = JsonConvert.SerializeObject(user);
         var content = new StringContent(postJson, Encoding.UTF8, "application/json");
 

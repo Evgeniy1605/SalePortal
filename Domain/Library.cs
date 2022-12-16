@@ -14,12 +14,11 @@ namespace SalePortal.Domain;
 
 internal class Library : ILibrary
 {
-    private readonly SalePortalDbConnection _context;
+
     private readonly IMapper _mapper;
-    public Library(SalePortalDbConnection context, IMapper mapper)
+    public Library(IMapper mapper)
     {
         _mapper = mapper;
-        _context = context;
     }
     public int GetUserId(List<Claim> claims)
     {

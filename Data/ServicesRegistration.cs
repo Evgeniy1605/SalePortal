@@ -43,6 +43,10 @@ public static class ServicesRegistration
             opt.SupportedUICultures= suportedCultures;
         });
         services.AddSignalR();
+        services.AddTransient<IOrderHttpClient, OrderHttpClient>();
+        services.AddTransient<IMessageHttpClient, ChatHttpClient>();
+        services.AddTransient<IChatHttpClient, ChatHttpClient>();
+
 
         return services;
     }

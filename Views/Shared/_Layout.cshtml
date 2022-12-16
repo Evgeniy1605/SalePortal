@@ -1,7 +1,7 @@
 ﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer;
-@inject SalePortal.Data.SalePortalDbConnection _context;
+@inject SalePortal.Data.ICategoryHttpClient _categoriesHttp;
 @{
-    var categories = _context.Categories.ToList();
+    var categories = await _categoriesHttp.GetCategoriesAsync();
 }
 <!DOCTYPE html>
 <html lang="en">
