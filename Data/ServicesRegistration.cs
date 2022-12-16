@@ -13,7 +13,7 @@ public static class ServicesRegistration
     {
         services.AddDbContext<SalePortalDbConnection>(options =>
         {
-            options.UseSqlServer( WebApplication.CreateBuilder().Configuration.GetConnectionString("Connection"));
+            //options.UseSqlServer( WebApplication.CreateBuilder().Configuration.GetConnectionString("Connection"));
         });
         services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(option =>
