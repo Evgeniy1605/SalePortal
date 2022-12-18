@@ -41,16 +41,15 @@
 
 
 
-
-
 <table>
     <tbody>
         <tr>
             <td>
-                <a class="btn privBtn @prevDisabled" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)"><img width="50" src="~/icons/before.png" /></a>
+                <a class=" btn @prevDisabled privBtn" asp-action="Search" asp-route-pageNumber="@(Model.PageIndex - 1)" asp-route-item="@ViewData["item"]"><img width="50" src="~/icons/before.png" /></a>
+
             </td>
             <td>
-                <a class="btn  @nextDisabled nextBtn" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)"><img width="50" src="~/icons/next.png" /></a>
+                <a class="btn @nextDisabled nextBtn" asp-action="Search" asp-route-pageNumber="@(Model.PageIndex + 1)" asp-route-item="@ViewData["item"]"><img width="50" src="~/icons/next.png" /></a>
             </td>
         </tr>
     </tbody>

@@ -1,0 +1,58 @@
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer;
+@model SalePortal.Domain.PagingClass<SalePortal.Entities.CommodityEntity>;
+
+
+
+
+<div class="text-center page ">
+    <h1 class="display-4">@localizer["Welcome"]</h1>
+    <h2>@ViewData["Text"]</h2>
+
+
+</div>
+
+
+<hr />
+@foreach (var item in Model)
+{
+
+
+
+    string path = "~/Images/" + $"{item.Id}" + ".png";
+        <form asp-controller="Commodity" asp-action="Details" asp-route-id="@item.Id">
+            <button class="CommodityBox" type="submit">
+                <div>
+                    <img src="@path" asp-append-version="true" width="50" />
+                    <p>@(char.ToUpper(item.Name[0]) + item.Name.Substring(1))</p>
+                    <p>@Math.Round(item.Price,2)</p>
+                    <p>@item.Description</p>
+                    <p>@item.PublicationDate</p>
+                </div>
+            </button>
+        </form>
+        <br />
+}
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+
+}
+<br />
+<table>
+    <tbody>
+        <tr>
+            <td>
+                <a class="btn  @prevDisabled privBtn" asp-action="FilterCategory" asp-route-pageNumber="@(Model.PageIndex - 1)" asp-route-id="@ViewData["id"]">
+                    <img width="50" src="~/icons/before.png" />
+                </a>
+            </td>
+            <td>
+                <a class="btn @nextDisabled nextBtn" asp-action="FilterCategory" asp-route-pageNumber="@(Model.PageIndex + 1)" asp-route-id="@ViewData["id"]">
+                    <img width="50" src="~/icons/next.png" />
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+    
+    
