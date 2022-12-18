@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Localization;
 using Microsoft.EntityFrameworkCore;
+using NuGet.ContentModel;
 using SalePortal.Data;
+using SalePortal.Domain;
+using SalePortal.Entities;
 using SalePortal.Models;
 using System.Diagnostics;
 
@@ -25,20 +28,23 @@ namespace SalePortal.Controllers
             _library= library;
         }
 
-        public async Task< IActionResult> Index()
+        public async Task< IActionResult> Index(int? pageNumber)
         {
             var text = _localizer["Hello"];
             ViewData["Text"] = text;
             var comodities = await _commodityHttpClient.GetCommoditiesAsync();
-            
-            return View(comodities.OrderByDescending(x => x.PublicationDate).ToList());
+
+            int pageSize = 2;
+            return View(PagingClass<CommodityEntity>.Create(comodities.OrderByDescending(x => x.PublicationDate).ToList(), pageNumber ?? 1, pageSize));
         }
 
-        public async Task<IActionResult> Search(string item)
+        public async Task<IActionResult> Search(string item, int? pageNumber)
         {
+            ViewData["item"] = item;
             var comodities = await _commodityHttpClient.GetCommoditiesAsync();
             var result = comodities.Where(x => x.Name.Contains(item.ToLower().Trim()));
-            return View("Index", result.ToList());
+            int pageSize = 2;
+            return View(PagingClass<CommodityEntity>.Create(result.ToList(), pageNumber ?? 1, pageSize));
         }
 
 
@@ -55,11 +61,13 @@ namespace SalePortal.Controllers
 
         }
 
-        public async Task<IActionResult> FilterCategory(int id)
+        public async Task<IActionResult> FilterCategory(int id, int? pageNumber)
         {
             var commotities = await _commodityHttpClient.GetCommoditiesAsync();
             var result = commotities.Where(x => x.TypeId == id).ToList();
-            return View("Index",  result);
+            ViewData["id"] = id;
+            int pageSize = 2;
+            return View(PagingClass<CommodityEntity>.Create(result.ToList(), pageNumber ?? 1, pageSize));
         }
 
         

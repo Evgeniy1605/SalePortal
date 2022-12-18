@@ -7,8 +7,8 @@
 <div class="text-center page ">
     <h1 class="display-4">@localizer["Welcome"]</h1>
     <h2>@ViewData["Text"]</h2>
-    
-    
+
+
 </div>
 
 
@@ -37,6 +37,5 @@
     var nextDisabled = !Model.HasNextPage ? "disabled" : "";
 
 }
-<a class="btn btn-primary @prevDisabled" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)">Previous</a>
-<a class="btn btn-primary @nextDisabled" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)">Next</a>
-
+<a class="btn btn-primary @prevDisabled" asp-action="Search" asp-route-pageNumber="@(Model.PageIndex - 1)" asp-route-item="@ViewData["item"]">Previous</a>
+<a class="btn btn-primary @nextDisabled" asp-action="Search" asp-route-pageNumber="@(Model.PageIndex + 1)" asp-route-item="@ViewData["item"]">Next</a>
