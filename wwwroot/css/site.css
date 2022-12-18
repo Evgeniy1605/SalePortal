@@ -38,3 +38,9 @@ body {
     bottom: 0;
     width: 100%;
 }
+.nextBtn{
+    margin-left : 700px;
+}
+.privBtn{
+    margin-top: -15px;
+}
