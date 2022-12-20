@@ -166,6 +166,7 @@ namespace SalePortal.Controllers
         {
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> PasswordRecovery(UserInputModel userInput)
         {
