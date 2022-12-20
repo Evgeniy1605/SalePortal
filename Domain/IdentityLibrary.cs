@@ -12,12 +12,14 @@ using SalePortal.Entities;
 
 namespace SalePortal.Domain;
 
-public class IdentityLibrary : IIdentityLibrary
+public class IdentityLibrary : IIdentityLibrary, IPasswordRecovery
 {
     private readonly SalePortalDbConnection _context;
     private readonly IMapper _mapper;
     private readonly IUserHttpClient _userHttp;
-    public IdentityLibrary(SalePortalDbConnection context, IMapper mapper, IUserHttpClient userHttp)
+    
+    public IdentityLibrary(SalePortalDbConnection context, IMapper mapper, 
+        IUserHttpClient userHttp)
     {
         _context = context;
         _mapper = mapper;
@@ -79,5 +81,13 @@ public class IdentityLibrary : IIdentityLibrary
         UserEntity user = _mapper.Map<UserEntity>(inputUser);
         await _userHttp.PostUserAsync(user);
         
+    }
+
+    public async Task ChangePasswordAsync(int userId, string newPassword)
+    {
+        var password = ToHashPassword(newPassword);
+        var user = await _userHttp.GetUserByIdAsync(userId);
+        user.Password = password;
+        await _userHttp.PutUserAsync(userId, user);
     }
 }

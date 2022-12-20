@@ -16,17 +16,28 @@ namespace SalePortal.Controllers
     {
 
         private readonly IOrderCommodity _orderCommodity;
+        private readonly IUserHttpClient _userHttp;
+        private readonly IEmailSender _emailSender;
         private readonly ILibrary _library;
         private readonly IHtmlLocalizer<IdentityController> _localizer;
         private readonly IIdentityLibrary _identityLibrary;
         private readonly ICommodityHttpClient _commodityHttpClient;
-        public IdentityController(ILibrary library, IHtmlLocalizer<IdentityController> localizer, IIdentityLibrary identityLibrary, ICommodityHttpClient commodityHttpClient, IOrderCommodity orderCommodity)
+        private readonly IPasswordRecovery _passwordRecovery;
+        public IdentityController(ILibrary library, IHtmlLocalizer<IdentityController> localizer, IIdentityLibrary identityLibrary, 
+            ICommodityHttpClient commodityHttpClient, 
+            IOrderCommodity orderCommodity,
+            IUserHttpClient userHttp,
+            IEmailSender emailSender,
+            IPasswordRecovery passwordRecovery)
         {
             _localizer = localizer;
             _library = library;
             _identityLibrary = identityLibrary;
             _commodityHttpClient = commodityHttpClient;
             _orderCommodity= orderCommodity;
+            _userHttp = userHttp;
+            _emailSender = emailSender;
+            _passwordRecovery = passwordRecovery;
         }
 
 
@@ -149,6 +160,52 @@ namespace SalePortal.Controllers
             }
             await _orderCommodity.RemoveOrderAsync(id);
             return RedirectToAction("UserPage", "Identity", new {aria=""});
+        }
+
+        public IActionResult password()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> PasswordRecovery(UserInputModel userInput)
+        {
+            var users =  _userHttp.GetUsers();
+            var user = users.SingleOrDefault(x => x.Name == userInput.Name && x.EmailAddress == userInput.EmailAddress );
+            if (user == null)
+            {
+                ViewData["NotFound"] = "User with this data was not found";
+                return View("Index");
+            }
+            Random random = new Random();
+            var code = random.Next(1000, 9999);
+            await _emailSender.SendAsync(user.EmailAddress, $"CODE: {code}");
+
+            PasswordRecoveryModel recoveryModel = new PasswordRecoveryModel()
+            {
+                Code = code,
+                UserId = user.Id,
+            };
+            return View(recoveryModel);
+        }
+
+        [HttpPost]
+         public  IActionResult ValidateCode(PasswordRecoveryModel recoveryModel)
+         {
+            if (recoveryModel.Code != recoveryModel.InputCode)
+            {
+                ViewData["WrongCode"] = "Wrong Code";
+                return View("Index");
+            }
+            
+            return View("ChangePassword", recoveryModel);
+         }
+
+        public async Task<IActionResult> NewPassword(PasswordRecoveryModel recoveryModel)
+        {
+            await _passwordRecovery.ChangePasswordAsync(recoveryModel.UserId, recoveryModel.NewPassword);
+            ViewData["PasswordChanged"] = "The password was changed successfully!!!";
+
+            return View("Index");
         }
 
     }

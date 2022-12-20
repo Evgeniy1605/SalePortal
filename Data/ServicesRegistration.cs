@@ -47,6 +47,7 @@ public static class ServicesRegistration
         services.AddTransient<IMessageHttpClient, ChatHttpClient>();
         services.AddTransient<IChatHttpClient, ChatHttpClient>();
         services.AddTransient<IEmailSender, EmailSender>();
+        services.AddTransient<IPasswordRecovery, IdentityLibrary>();
 
 
         return services;
