@@ -46,6 +46,46 @@ namespace SalePortal.Domain
             finally { client.Dispose(); }
         }
 
+        public List<CategoryEntity> GetCategories()
+        {
+            string Uri = _configuration.GetSection("ApiUri").Value + "Categories";
+            string Key = _configuration.GetSection("ApiKey").Value;
+            string json;
+            var client = new HttpClient();
+            List<CategoryEntity> result = new List<CategoryEntity>();
+            try
+            {
+                var reqest = new HttpRequestMessage()
+                {
+                    Method = HttpMethod.Get,
+                    RequestUri = new Uri(Uri),
+                    Headers =
+                {
+                    { "ApiKey", Key }
+                }
+                };
+
+                using (var response = client.Send(reqest))
+                {
+                    response.EnsureSuccessStatusCode();
+                    json = response.Content.ReadAsStringAsync().Result;
+                }
+
+                result = JsonConvert.DeserializeObject<List<CategoryEntity>>(json);
+            }
+            catch (Exception)
+            {
+
+
+                return result;
+            }
+            finally
+            {
+                client.Dispose();
+            }
+            return result;
+        }
+
         public async Task<List<CategoryEntity>> GetCategoriesAsync()
         {
             string Uri = _configuration.GetSection("ApiUri").Value + "Categories";
@@ -199,5 +239,7 @@ namespace SalePortal.Domain
                 client.Dispose();
             }
         }
+
+       
     }
 }

@@ -13,7 +13,7 @@ public static class ServicesRegistration
     {
         services.AddDbContext<SalePortalDbConnection>(options =>
         {
-            options.UseSqlServer( WebApplication.CreateBuilder().Configuration.GetConnectionString("Connection"));
+            //options.UseSqlServer( WebApplication.CreateBuilder().Configuration.GetConnectionString("Connection"));
         });
         services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(option =>
@@ -49,6 +49,7 @@ public static class ServicesRegistration
         services.AddTransient<IEmailSender, EmailSender>();
         services.AddTransient<IPasswordRecovery, IdentityLibrary>();
 
+        services.AddTransient<IAdmins, UserHttpClient>();
 
         return services;
     }

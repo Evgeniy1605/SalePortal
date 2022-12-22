@@ -9,5 +9,6 @@ namespace SalePortal.Data
         public Task<bool> PostCategoryAsync(CategoryEntity category);
         public Task<bool> DeleteCategoryAsync(int categoryId);
         public Task<bool> PutCategoryAsync(int categoryId, CategoryEntity category);
+        public List<CategoryEntity> GetCategories();
     }
 }
