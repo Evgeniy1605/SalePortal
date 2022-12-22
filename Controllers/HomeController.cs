@@ -34,7 +34,7 @@ namespace SalePortal.Controllers
             ViewData["Text"] = text;
             var comodities = await _commodityHttpClient.GetCommoditiesAsync();
 
-            int pageSize = 2;
+            int pageSize = 5;
             return View(PagingClass<CommodityEntity>.Create(comodities.OrderByDescending(x => x.PublicationDate).ToList(), pageNumber ?? 1, pageSize));
         }
 
@@ -43,7 +43,7 @@ namespace SalePortal.Controllers
             ViewData["item"] = item;
             var comodities = await _commodityHttpClient.GetCommoditiesAsync();
             var result = comodities.Where(x => x.Name.Contains(item.ToLower().Trim()));
-            int pageSize = 2;
+            int pageSize = 5;
             return View(PagingClass<CommodityEntity>.Create(result.ToList(), pageNumber ?? 1, pageSize));
         }
 
@@ -66,7 +66,7 @@ namespace SalePortal.Controllers
             var commotities = await _commodityHttpClient.GetCommoditiesAsync();
             var result = commotities.Where(x => x.TypeId == id).ToList();
             ViewData["id"] = id;
-            int pageSize = 2;
+            int pageSize = 5;
             return View(PagingClass<CommodityEntity>.Create(result.ToList(), pageNumber ?? 1, pageSize));
         }
 

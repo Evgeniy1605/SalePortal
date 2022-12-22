@@ -71,7 +71,7 @@
 
                 <div class="collapse show border" id="collapseExample">
                     <ul class="list-unstyled">
-                        @foreach (var item in categories)
+                        @foreach (var item in categories.OrderBy(x => x.Name).ToList())
                         {
                             <li><a asp-controller="Home" asp-action="FilterCategory" asp-route-id="@item.Id" class="dropdown-item">@localizer[@item.Name]</a></li>
                         }
