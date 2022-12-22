@@ -50,6 +50,7 @@ public static class ServicesRegistration
         services.AddTransient<IPasswordRecovery, IdentityLibrary>();
 
         services.AddTransient<IAdmins, UserHttpClient>();
+        services.AddTransient<IAdmins, UserHttpClient>();
 
         return services;
     }
