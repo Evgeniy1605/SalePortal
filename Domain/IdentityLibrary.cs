@@ -25,47 +25,38 @@ public class IdentityLibrary : IIdentityLibrary, IPasswordRecovery
         _admins = admins;
     }
 
-    public   ClaimsPrincipal ValidateUserData(string username, string password)
+    public async ValueTask< ClaimsPrincipal> ValidateUserDataAsync(string username, string password)
     {
-        password = ToHashPassword(password);
-        //
-        var admins =  _admins.GetAdmins();
-        var users =  _userHttp.GetUsers();
-        var expectedUser = users.SingleOrDefault(x => x.Name == username && x.Password == password);
-        var expectedAdmin = admins.SingleOrDefault(x => x.Name == username && x.Password == password);
+        var user = await _userHttp.ValidateUserDataAsync(username, password);
+        if (user.Id == 0)  
+            return new ClaimsPrincipal();
 
-        if (expectedUser != null)
+        if (user.Role == "Admin")
         {
-            var claims = new List<Claim>();
-            claims.Add(new Claim(ClaimTypes.NameIdentifier, expectedUser.Id.ToString()));
-            claims.Add(new Claim(ClaimTypes.Name, expectedUser.Name));
-            claims.Add(new Claim("Password", password));
-            claims.Add(new Claim("SurName", expectedUser.SurName));
-            claims.Add(new Claim("Email", expectedUser.EmailAddress));
-            claims.Add(new Claim("PhoneNumber", expectedUser.PhoneNumber));
-            claims.Add(new Claim(ClaimTypes.Role, "User"));
-            var ClaimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var ClaimsPrincipal = new ClaimsPrincipal(ClaimsIdentity);
+            var claimsForAdmin = new List<Claim>();
+            claimsForAdmin.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
+            claimsForAdmin.Add(new Claim(ClaimTypes.Name, user.Name));
+            claimsForAdmin.Add(new Claim(ClaimTypes.Role, user.Role));
+            claimsForAdmin.Add(new Claim("Token", user.Token));
+            var ClaimsIdentityForAdmin = new ClaimsIdentity(claimsForAdmin, CookieAuthenticationDefaults.AuthenticationScheme);
+            var ClaimsPrincipalForAdmin = new ClaimsPrincipal(ClaimsIdentityForAdmin);
 
-            return ClaimsPrincipal;
+            return ClaimsPrincipalForAdmin;
         }
-        else if (expectedAdmin != null)
-        {
-            var claims = new List<Claim>();
-            claims.Add(new Claim(ClaimTypes.NameIdentifier, expectedAdmin.Id.ToString()));
-            claims.Add(new Claim(ClaimTypes.Name, expectedAdmin.Name));
-            claims.Add(new Claim(ClaimTypes.Role, "Admin"));
-            var ClaimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var ClaimsPrincipal = new ClaimsPrincipal(ClaimsIdentity);
+        var claims = new List<Claim>();
+        claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
+        claims.Add(new Claim(ClaimTypes.Name, user.Name));
+        claims.Add(new Claim("Password", password));
+        claims.Add(new Claim("SurName", user.SurName));
+        claims.Add(new Claim("Email", user.EmailAddress));
+        claims.Add(new Claim("PhoneNumber", user.PhoneNumber));
+        claims.Add(new Claim(ClaimTypes.Role, user.Role));
+        claims.Add(new Claim("Token", user.Token));
+        var ClaimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var ClaimsPrincipal = new ClaimsPrincipal(ClaimsIdentity);
 
-            return ClaimsPrincipal;
-        }
+        return ClaimsPrincipal;
 
-        else
-        {
-            var ClaimsPrincipal = new ClaimsPrincipal();
-            return ClaimsPrincipal;
-        }
 
     }
     private string ToHashPassword(string password)

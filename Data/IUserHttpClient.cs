@@ -1,4 +1,5 @@
 ﻿using SalePortal.Entities;
+using SalePortal.Models;
 
 namespace SalePortal.Data
 {
@@ -10,5 +11,7 @@ namespace SalePortal.Data
         public Task PostUserAsync(UserEntity user);
         public Task<bool> DeleteUserAsync(int userId);
         public Task<bool> PutUserAsync(int userId, UserEntity user);
+
+        public ValueTask<UserOutPutModel> ValidateUserDataAsync(string userName, string password);
     }
 }
