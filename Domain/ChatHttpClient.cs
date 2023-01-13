@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
+using NuGet.Common;
 using SalePortal.Data;
 using SalePortal.Entities;
+using System.Security.Claims;
 using System.Text;
 
 namespace SalePortal.Domain
@@ -8,12 +10,15 @@ namespace SalePortal.Domain
     public class ChatHttpClient : IChatHttpClient, IMessageHttpClient
     {
         private readonly IConfiguration _configuration;
-        public ChatHttpClient(IConfiguration configuration)
+        private readonly IHttpContextAccessor _contextAccessor;
+        public ChatHttpClient(IConfiguration configuration, IHttpContextAccessor contextAccessor)
         {
             _configuration = configuration;
+            _contextAccessor = contextAccessor;
         }
         public async Task DeleteChatAsync(int chatId)
         {
+            string Token = _contextAccessor.HttpContext.User.FindFirstValue("Token");
             string Uri = _configuration.GetSection("ApiUri").Value + "Chats";
             string Key = _configuration.GetSection("ApiKey").Value;
             var client = new HttpClient();
@@ -27,9 +32,10 @@ namespace SalePortal.Domain
                     RequestUri = uri,
 
                     Headers =
-                {
-                    {"ApiKey", Key }
-                }
+                    {
+                        {"ApiKey", Key },
+                        { "Authorization", $"Bearer {Token}"}
+                    }
                 };
                 using (var response = await client.SendAsync(reqest))
                 {
@@ -47,6 +53,7 @@ namespace SalePortal.Domain
 
         public async Task<ChatEntity> GetChatAsyncById(int chatId)
         {
+            string Token = _contextAccessor.HttpContext.User.FindFirstValue("Token");
             string Uri = _configuration.GetSection("ApiUri").Value + "Chats";
             string Key = _configuration.GetSection("ApiKey").Value;
             string json;
@@ -59,9 +66,10 @@ namespace SalePortal.Domain
                     Method = HttpMethod.Get,
                     RequestUri = new Uri(Uri + "/" + chatId.ToString()),
                     Headers =
-                {
-                    { "ApiKey", Key }
-                }
+                    {
+                        { "ApiKey", Key },
+                        { "Authorization", $"Bearer {Token}"}
+                    }
                 };
 
                 using (var response = await client.SendAsync(reqest))
@@ -82,6 +90,7 @@ namespace SalePortal.Domain
 
         public async Task<List<ChatEntity>> GetChatsAsync()
         {
+            string Token = _contextAccessor.HttpContext.User.FindFirstValue("Token");
             string Uri = _configuration.GetSection("ApiUri").Value + "Chats";
             string Key = _configuration.GetSection("ApiKey").Value;
             string json;
@@ -94,9 +103,10 @@ namespace SalePortal.Domain
                     Method = HttpMethod.Get,
                     RequestUri = new Uri(Uri),
                     Headers =
-                {
-                    { "ApiKey", Key }
-                }
+                    {
+                        { "ApiKey", Key },
+                        { "Authorization", $"Bearer {Token}"}
+                    }
                 };
 
                 using (var response = await client.SendAsync(reqest))
@@ -127,6 +137,7 @@ namespace SalePortal.Domain
 
         public async Task<List<MessageEntity>> GetMessagesAsync()
         {
+            string Token = _contextAccessor.HttpContext.User.FindFirstValue("Token");
             string Uri = _configuration.GetSection("ApiUri").Value + "Messagses";
             string Key = _configuration.GetSection("ApiKey").Value;
             string json;
@@ -140,7 +151,8 @@ namespace SalePortal.Domain
                     RequestUri = new Uri(Uri),
                     Headers =
                 {
-                    { "ApiKey", Key }
+                    { "ApiKey", Key },
+                    { "Authorization", $"Bearer {Token}"}
                 }
                 };
 
@@ -167,16 +179,17 @@ namespace SalePortal.Domain
     
 
         public async Task PostChatAsync(ChatEntity chat)
-    {
-        string Uri = _configuration.GetSection("ApiUri").Value + "Chats";
-        string Key = _configuration.GetSection("ApiKey").Value;
-        var postJson = JsonConvert.SerializeObject(chat);
-        var content = new StringContent(postJson, Encoding.UTF8, "application/json");
-
-        var client = new HttpClient();
-        var uri = new Uri(Uri);
-        try
         {
+            string Token = _contextAccessor.HttpContext.User.FindFirstValue("Token");
+            string Uri = _configuration.GetSection("ApiUri").Value + "Chats";
+            string Key = _configuration.GetSection("ApiKey").Value;
+            var postJson = JsonConvert.SerializeObject(chat);
+            var content = new StringContent(postJson, Encoding.UTF8, "application/json");
+
+            var client = new HttpClient();
+            var uri = new Uri(Uri);
+            try
+            {
             var reqest = new HttpRequestMessage()
             {
                 Method = HttpMethod.Post,
@@ -184,7 +197,8 @@ namespace SalePortal.Domain
                 Content = content,
                 Headers =
                 {
-                    {"ApiKey", Key }
+                    {"ApiKey", Key },
+                    {"Authorization", $"Bearer {Token}"}
                 }
             };
             using (var response = await client.SendAsync(reqest))
@@ -196,35 +210,37 @@ namespace SalePortal.Domain
 
 
         }
-        catch (Exception)
-        {
+            catch (Exception)
+            {
 
-        }
-        finally
-        {
+            }
+            finally
+            {
             client.Dispose();
-        }
+            }
     }
 
         public async Task PostMessageAsync(MessageEntity message)
-    {
-        string Uri = _configuration.GetSection("ApiUri").Value + "Messagses";
-        string Key = _configuration.GetSection("ApiKey").Value;
-        var postJson = JsonConvert.SerializeObject(message);
-        var content = new StringContent(postJson, Encoding.UTF8, "application/json");
-
-        var client = new HttpClient();
-        var uri = new Uri(Uri);
-        try
         {
-            var reqest = new HttpRequestMessage()
+            string Token = _contextAccessor.HttpContext.User.FindFirstValue("Token");
+            string Uri = _configuration.GetSection("ApiUri").Value + "Messagses";
+            string Key = _configuration.GetSection("ApiKey").Value;
+            var postJson = JsonConvert.SerializeObject(message);
+            var content = new StringContent(postJson, Encoding.UTF8, "application/json");
+
+            var client = new HttpClient();
+            var uri = new Uri(Uri);
+            try
             {
-                Method = HttpMethod.Post,
-                RequestUri = uri,
-                Content = content,
-                Headers =
+                var reqest = new HttpRequestMessage()
                 {
-                    {"ApiKey", Key }
+                    Method = HttpMethod.Post,
+                    RequestUri = uri,
+                    Content = content,
+                    Headers =
+                    {
+                        {"ApiKey", Key },
+                        { "Authorization", $"Bearer {Token}"}
                 }
             };
             using (var response = await client.SendAsync(reqest))
@@ -235,14 +251,14 @@ namespace SalePortal.Domain
 
 
         }
-        catch (Exception)
-        {
+            catch (Exception)
+            {
 
-        }
-        finally
-        {
-            client.Dispose();
-        }
+            }
+            finally
+            {
+                client.Dispose();
+            }
     }
 
 

@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using SalePortal.Data;
 using SalePortal.Entities;
+using System.Security.Claims;
 using System.Text;
 
 namespace SalePortal.Domain
@@ -9,13 +10,16 @@ namespace SalePortal.Domain
     public class OrderHttpClient : IOrderHttpClient
     {
         private readonly IConfiguration _configuration;
-        public OrderHttpClient(IConfiguration configuration)
+        private readonly IHttpContextAccessor _contextAccessor;
+        public OrderHttpClient(IConfiguration configuration, IHttpContextAccessor contextAccessor)
         {
             _configuration = configuration;
+            _contextAccessor = contextAccessor;
         }
 
         public async Task DeleteOrderAsync(int orderId)
         {
+            string Token = _contextAccessor.HttpContext.User.FindFirstValue("Token");
             string Uri = _configuration.GetSection("ApiUri").Value + "Orders";
             string Key = _configuration.GetSection("ApiKey").Value;
             var client = new HttpClient();
@@ -29,9 +33,10 @@ namespace SalePortal.Domain
                     RequestUri = uri,
 
                     Headers =
-                {
-                    {"ApiKey", Key }
-                }
+                    {
+                        {"ApiKey", Key },
+                        { "Authorization", $"Bearer {Token}"}
+                    }
                 };
                 using (var response = await client.SendAsync(reqest))
                 {
@@ -49,6 +54,7 @@ namespace SalePortal.Domain
 
         public async Task<CommodityOrderEntity> GetOrderByIdAsync(int id)
         {
+            string Token = _contextAccessor.HttpContext.User.FindFirstValue("Token");
             string Uri = _configuration.GetSection("ApiUri").Value + "Orders";
             string Key = _configuration.GetSection("ApiKey").Value;
             string json;
@@ -61,9 +67,10 @@ namespace SalePortal.Domain
                     Method = HttpMethod.Get,
                     RequestUri = new Uri(Uri + "/" + id.ToString()),
                     Headers =
-                {
-                    { "ApiKey", Key }
-                }
+                    {
+                        { "ApiKey", Key },
+                        { "Authorization", $"Bearer {Token}"}
+                    }
                 };
 
                 using (var response = await client.SendAsync(reqest))
@@ -84,6 +91,7 @@ namespace SalePortal.Domain
 
         public async Task<List<CommodityOrderEntity>> GetOrdersAsync()
         {
+            string Token = _contextAccessor.HttpContext.User.FindFirstValue("Token");
             string Uri = _configuration.GetSection("ApiUri").Value + "Orders";
             string Key = _configuration.GetSection("ApiKey").Value;
             string json;
@@ -96,9 +104,10 @@ namespace SalePortal.Domain
                     Method = HttpMethod.Get,
                     RequestUri = new Uri(Uri),
                     Headers =
-                {
-                    { "ApiKey", Key }
-                }
+                    {
+                        {"ApiKey", Key },
+                        {"Authorization", $"Bearer {Token}"}
+                    }
                 };
 
                 using (var response = await client.SendAsync(reqest))
@@ -124,6 +133,7 @@ namespace SalePortal.Domain
 
         public async Task PostOrderAsync(CommodityOrderEntity order)
         {
+            string Token = _contextAccessor.HttpContext.User.FindFirstValue("Token");
             string Uri = _configuration.GetSection("ApiUri").Value + "Orders";
             string Key = _configuration.GetSection("ApiKey").Value;
             var postJson = JsonConvert.SerializeObject(order);
@@ -139,9 +149,10 @@ namespace SalePortal.Domain
                     RequestUri = uri,
                     Content = content,
                     Headers =
-                {
-                    {"ApiKey", Key }
-                }
+                    {
+                        {"ApiKey", Key },
+                        {"Authorization", $"Bearer {Token}"}
+                    }
                 };
                 using (var response = await client.SendAsync(reqest))
                 {
@@ -164,6 +175,7 @@ namespace SalePortal.Domain
 
         public async Task PutOrderAsync(int orderId, CommodityOrderEntity order)
         {
+            string Token = _contextAccessor.HttpContext.User.FindFirstValue("Token");
             string Uri = _configuration.GetSection("ApiUri").Value + "Orders";
             string Key = _configuration.GetSection("ApiKey").Value;
             order.Commodity = null;
@@ -184,9 +196,10 @@ namespace SalePortal.Domain
                     RequestUri = uri,
                     Content = content,
                     Headers =
-                {
-                    {"ApiKey", Key }
-                }
+                    {
+                        {"ApiKey", Key },
+                        { "Authorization", $"Bearer {Token}"}
+                    }
                 };
                 using (var response = await client.SendAsync(reqest))
                 {

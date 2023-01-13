@@ -50,7 +50,7 @@ namespace SalePortal.Controllers
         [HttpPost]
         public async Task<IActionResult> ValidateData(string username, string password)
         {
-            var ClaimsPrincipal = _identityLibrary.ValidateUserData(username, password);
+            var ClaimsPrincipal = await _identityLibrary.ValidateUserDataAsync(username, password);
             if (ClaimsPrincipal.Identity != null)
             {
                 await HttpContext.SignInAsync(ClaimsPrincipal);

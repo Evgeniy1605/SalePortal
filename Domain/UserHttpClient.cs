@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using SalePortal.Data;
 using SalePortal.Entities;
+using SalePortal.Models;
 using System.Text;
 
 namespace SalePortal.Domain;
@@ -227,6 +228,47 @@ public class UserHttpClient : IUserHttpClient, IAdmins
             }
 
             result = JsonConvert.DeserializeObject<List<AdminEntity>>(json);
+        }
+        catch (Exception)
+        {
+
+
+            return result;
+        }
+        finally
+        {
+            client.Dispose();
+        }
+        return result;
+    }
+
+    public async ValueTask<UserOutPutModel> ValidateUserDataAsync(string userName, string password)
+    {
+        string Uri = $"{_configuration.GetSection("ApiUri").Value}User/Validation?userName={userName}&password={password}";
+        string Key = _configuration.GetSection("ApiKey").Value;
+        string json;
+        var client = new HttpClient();
+        UserOutPutModel result = new UserOutPutModel();
+        try
+        {
+            var reqest = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(Uri),
+                Headers =
+                {
+                    { "ApiKey", Key }
+                }
+            };
+
+            using (var response = client.Send(reqest))
+            {
+                response.EnsureSuccessStatusCode();
+                json = await response.Content.ReadAsStringAsync();
+
+            }
+
+            result = JsonConvert.DeserializeObject<UserOutPutModel>(json);
         }
         catch (Exception)
         {

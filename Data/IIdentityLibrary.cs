@@ -5,7 +5,7 @@ namespace SalePortal.Data
 {
     public interface IIdentityLibrary
     {
-        public ClaimsPrincipal ValidateUserData(string username, string password);
+        public ValueTask<ClaimsPrincipal> ValidateUserDataAsync(string username, string password);
         public Task ToRegisterAUser(UserInputModel inputModel);
     }
 }

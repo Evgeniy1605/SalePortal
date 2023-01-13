@@ -51,6 +51,7 @@ public static class ServicesRegistration
 
         services.AddTransient<IAdmins, UserHttpClient>();
         services.AddTransient<IAdmins, UserHttpClient>();
+        services.AddHttpContextAccessor();
 
         return services;
     }

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SalePortal.Data;
 using SalePortal.Entities;
+using System.Security.Claims;
 using System.Text;
 
 namespace SalePortal.Domain
@@ -12,11 +13,15 @@ namespace SalePortal.Domain
         private readonly IUserHttpClient _userHttp;
         private readonly IConfiguration _configuration;
         private readonly ICategoryHttpClient _categoryHttp;
-        public CommodityHttpClient(IUserHttpClient userHttp, IConfiguration configuration, ICategoryHttpClient categoryHttp)
+        private readonly IHttpContextAccessor _contextAccessor;
+        public CommodityHttpClient(IUserHttpClient userHttp, IConfiguration configuration, 
+            ICategoryHttpClient categoryHttp,
+            IHttpContextAccessor contextAccessor)
         {
             _userHttp = userHttp;
             _configuration = configuration;
             _categoryHttp = categoryHttp;
+            _contextAccessor = contextAccessor;
         }
         public  async Task<List<CommodityEntity>> GetCommoditiesAsync()
         {
@@ -32,9 +37,9 @@ namespace SalePortal.Domain
                     Method = HttpMethod.Get,
                     RequestUri = new Uri(Uri),
                     Headers =
-                {
-                    { "ApiKey", Key }
-                }
+                    {
+                        { "ApiKey", Key }
+                    }
                 };
 
                 using (var response = await client.SendAsync(reqest))
@@ -60,6 +65,7 @@ namespace SalePortal.Domain
 
         public async Task<bool> PostCommoditiesAsync(CommodityEntity commodity, int userId)
         {
+            string Token = _contextAccessor.HttpContext.User.FindFirstValue("Token");
             string Uri = _configuration.GetSection("ApiUri").Value + "Commodities";
             string Key = _configuration.GetSection("ApiKey").Value;
             var owner = await _userHttp.GetUserByIdAsync(userId);
@@ -86,7 +92,8 @@ namespace SalePortal.Domain
                     Content = content,
                     Headers =
                 {
-                    {"ApiKey", Key }
+                    {"ApiKey", Key },
+                    { "Authorization", $"Bearer {Token}"}
                 }
                 };
                 using (var response = await client.SendAsync(reqest))
@@ -113,6 +120,7 @@ namespace SalePortal.Domain
 
         public async Task<bool> DeleteCommodityAsync(int CommodityId)
         {
+            string Token = _contextAccessor.HttpContext.User.FindFirstValue("Token");
             string Uri = _configuration.GetSection("ApiUri").Value + "Commodities";
             string Key = _configuration.GetSection("ApiKey").Value;
             var client = new HttpClient();
@@ -126,9 +134,10 @@ namespace SalePortal.Domain
                     RequestUri = uri,
 
                     Headers =
-                {
-                    {"ApiKey", Key }
-                }
+                    {
+                        {"ApiKey", Key },
+                        {"Authorization", $"Bearer {Token}"}
+                    }
                 };
                 using (var response = await client.SendAsync(reqest))
                 {
@@ -181,6 +190,7 @@ namespace SalePortal.Domain
 
         public async Task<bool> PutCommodityAsync(int commodityId, int userId, CommodityEntity commodity)
         {
+            string Token = _contextAccessor.HttpContext.User.FindFirstValue("Token");
             string Uri = _configuration.GetSection("ApiUri").Value + "Commodities";
             string Key = _configuration.GetSection("ApiKey").Value;
             var owner = await _userHttp.GetUserByIdAsync(userId);
@@ -207,7 +217,8 @@ namespace SalePortal.Domain
                     Content = content,
                     Headers =
                 {
-                    {"ApiKey", Key }
+                    {"ApiKey", Key },
+                    {"Authorization", $"Bearer {Token}"}
                 }
                 };
                 using (var response = await client.SendAsync(reqest))

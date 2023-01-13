@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using SalePortal.Data;
 using SalePortal.Entities;
+using System.Security.Claims;
 using System.Text;
 
 namespace SalePortal.Domain
@@ -8,13 +9,16 @@ namespace SalePortal.Domain
     public class CategoryHttpClient : ICategoryHttpClient
     {
         private readonly IConfiguration _configuration;
-        public CategoryHttpClient(IConfiguration configuration)
+        private readonly IHttpContextAccessor _contextAccessor;
+        public CategoryHttpClient(IConfiguration configuration, IHttpContextAccessor contextAccessor)
         {
             _configuration = configuration;
+            _contextAccessor = contextAccessor;
         }
 
         public async Task<bool> DeleteCategoryAsync(int categoryId)
         {
+            string Token = _contextAccessor.HttpContext.User.FindFirstValue("Token");
             string Uri = _configuration.GetSection("ApiUri").Value + "Categories";
             string Key = _configuration.GetSection("ApiKey").Value;
             var client = new HttpClient();
@@ -29,7 +33,8 @@ namespace SalePortal.Domain
 
                     Headers =
                 {
-                    {"ApiKey", Key }
+                    {"ApiKey", Key },
+                    { "Authorization", $"Bearer {Token}"}
                 }
                 };
                 using (var response = await client.SendAsync(reqest))
@@ -164,6 +169,7 @@ namespace SalePortal.Domain
 
         public async Task<bool> PostCategoryAsync(CategoryEntity category)
         {
+            string Token = _contextAccessor.HttpContext.User.FindFirstValue("Token");
             string Uri = _configuration.GetSection("ApiUri").Value + "Categories";
             string Key = _configuration.GetSection("ApiKey").Value;
             var postJson = JsonConvert.SerializeObject(category);
@@ -171,6 +177,7 @@ namespace SalePortal.Domain
 
             var client = new HttpClient();
             var uri = new Uri(Uri);
+
             try
             {
                 var reqest = new HttpRequestMessage()
@@ -179,9 +186,11 @@ namespace SalePortal.Domain
                     RequestUri = uri,
                     Content = content,
                     Headers =
-                {
-                    {"ApiKey", Key }
-                }
+                    {
+                        {"ApiKey", Key },
+                        { "Authorization", $"Bearer {Token}"}
+                    },
+                    
                 };
                 using (var response = await client.SendAsync(reqest))
                 {
@@ -203,6 +212,7 @@ namespace SalePortal.Domain
 
         public async Task<bool> PutCategoryAsync(int categoryId, CategoryEntity category)
         {
+            string Token = _contextAccessor.HttpContext.User.FindFirstValue("Token");
             string Uri = _configuration.GetSection("ApiUri").Value + "Categories";
             string Key = _configuration.GetSection("ApiKey").Value;
             var postJson = JsonConvert.SerializeObject(category);
@@ -219,7 +229,8 @@ namespace SalePortal.Domain
                     Content = content,
                     Headers =
                 {
-                    {"ApiKey", Key }
+                    {"ApiKey", Key },
+                    { "Authorization", $"Bearer {Token}"}
                 }
                 };
                 using (var response = await client.SendAsync(reqest))
