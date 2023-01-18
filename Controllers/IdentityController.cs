@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Localization;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SalePortal.Data;
 using SalePortal.Models;
@@ -23,12 +24,14 @@ namespace SalePortal.Controllers
         private readonly IIdentityLibrary _identityLibrary;
         private readonly ICommodityHttpClient _commodityHttpClient;
         private readonly IPasswordRecovery _passwordRecovery;
+        private readonly INovaPoshtaPostOffices _novaPoshtaPostOffices;
         public IdentityController(ILibrary library, IHtmlLocalizer<IdentityController> localizer, IIdentityLibrary identityLibrary, 
             ICommodityHttpClient commodityHttpClient, 
             IOrderCommodity orderCommodity,
             IUserHttpClient userHttp,
             IEmailSender emailSender,
-            IPasswordRecovery passwordRecovery)
+            IPasswordRecovery passwordRecovery,
+            INovaPoshtaPostOffices novaPoshtaPostOffices)
         {
             _localizer = localizer;
             _library = library;
@@ -38,6 +41,7 @@ namespace SalePortal.Controllers
             _userHttp = userHttp;
             _emailSender = emailSender;
             _passwordRecovery = passwordRecovery;
+            _novaPoshtaPostOffices = novaPoshtaPostOffices;
         }
 
 
@@ -105,13 +109,7 @@ namespace SalePortal.Controllers
             return View();
         }
 
-        [Authorize]
-        public async Task<IActionResult> AddOrderForBuyingCommodity(int commodityId)
-        {
-            var userId = _library.GetUserId(User.Claims.ToList());
-            await _orderCommodity.AddOrderAsync(commodityId, userId);
-            return RedirectToAction("UserPage", "Identity", new { aria = "" });
-        }
+        
 
         
 
@@ -207,6 +205,40 @@ namespace SalePortal.Controllers
             ViewData["PasswordChanged"] = "The password was changed successfully!!!";
 
             return View("Index");
+        }
+
+        [Authorize]
+        public async Task<IActionResult> AddOrderForBuyingCommodity(int commodityId)
+        {
+            /*var userId = _library.GetUserId(User.Claims.ToList());
+            await _orderCommodity.AddOrderAsync(commodityId, userId);
+            return RedirectToAction("UserPage", "Identity", new { aria = "" });*/
+            var commodity  = await _commodityHttpClient.GetCommodityByIdAsync(commodityId);
+            return View(commodity);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> SaveOrder(string typeOfDelivery, int commodityId)
+        {
+            var userId = _library.GetUserId(User.Claims.ToList());
+            if (typeOfDelivery != "OwnDelivery")
+            {
+                typeOfDelivery = $"Nova Poshta: {typeOfDelivery}";
+            }
+            else
+            {
+                typeOfDelivery = "Own Delivery";
+            }
+            await _orderCommodity.AddOrderAsync(commodityId, userId, typeOfDelivery);
+            ViewData["AddedOder"] = "Ther order was added successfully!";
+            return RedirectToAction("UserPage", "Identity", new { aria = "" });
+        }
+
+        public async Task<IActionResult> GetPostOffices(string cityName)
+        {
+            var postOffices = await _novaPoshtaPostOffices.GetPostOfficesAsync(cityName);
+            ViewBag.postOffices = new SelectList(postOffices, "Description", "Description");
+            return PartialView("_postOffices");
         }
 
     }

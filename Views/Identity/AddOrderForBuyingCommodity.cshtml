@@ -1,0 +1,87 @@
+﻿@model SalePortal.Entities.CommodityEntity;
+@{
+    string path = "~/Images/" + $"{Model.Id}" + ".png";
+    
+}
+<input id="commodityId" type="hidden" value="@Model.Id" />
+<div class="page">
+    <img src="@path" asp-append-version ="true" width="50" />
+    <h3>@Model.Name</h3>
+    <i>@Math.Round(Model.Price, 2) $</i>
+    
+</div>
+<hr />
+<div >
+    <b>Delivery</b>
+    <br />
+    <select id="optionsOfDelivery">
+
+
+        <option>Own Delivery</option>
+
+
+        <option>Nova Poshta</option>
+
+    </select>
+    <button id="TypeDelivery" class="btn btn-primary">Ok</button>
+</div>
+<br />
+<div id="loudPartD">
+
+</div>
+<div id="PostOffices">
+
+</div>
+
+
+@section Scripts{
+    <script>
+        var commodityId = document.getElementById("commodityId").value;
+        var PostOffices = document.getElementById("PostOffices");
+        var loudDiv = document.getElementById("loudPartD");
+        const btnTypeOfDelivery = document.getElementById("TypeDelivery");
+        btnTypeOfDelivery.addEventListener("click", () =>{
+            loudDiv.innerHTML = "";
+
+            var typeOfDelivery = document.getElementById("optionsOfDelivery");
+            var typeOfDeliveryValue =  typeOfDelivery.value;
+            if (typeOfDeliveryValue === "Own Delivery"){
+                var nextBtn = document.createElement("a");
+                nextBtn.setAttribute("class","btn btn-primary");
+                nextBtn.innerText = "Next";
+                nextBtn.setAttribute("href", `/Identity/SaveOrder?typeOfDelivery=OwnDelivery&commodityId=${commodityId}`)
+                loudDiv.appendChild(nextBtn);
+                
+            }
+            if (typeOfDeliveryValue === "Nova Poshta") {
+                var cityInput = document.createElement("input");
+                cityInput.setAttribute("id", "cityInput");
+                cityInput.setAttribute("type", "text");
+
+                var cityInputSubmmit = document.createElement("button");
+                cityInputSubmmit.setAttribute("class", "btn btn-primary");
+                cityInputSubmmit.setAttribute("id", "cityInputSubmmit");
+                cityInputSubmmit.innerText = "Ok"
+
+                var lableForcityInput = document.createElement("b");
+                lableForcityInput.innerText = "Type your city"
+                
+                loudDiv.appendChild(lableForcityInput);
+                loudDiv.appendChild(cityInput);
+                loudDiv.appendChild(cityInputSubmmit);
+                //
+
+                cityInputSubmmit.addEventListener("click", () =>{
+                    PostOffices.innerHTML = "";
+                    var city = cityInput.value;
+
+                    $('#PostOffices').load(`/Identity/GetPostOffices?cityName=${city}`)
+                    
+                });
+            }
+
+        });
+
+        
+    </script>
+}
