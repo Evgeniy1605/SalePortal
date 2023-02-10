@@ -210,9 +210,7 @@ namespace SalePortal.Controllers
         [Authorize]
         public async Task<IActionResult> AddOrderForBuyingCommodity(int commodityId)
         {
-            /*var userId = _library.GetUserId(User.Claims.ToList());
-            await _orderCommodity.AddOrderAsync(commodityId, userId);
-            return RedirectToAction("UserPage", "Identity", new { aria = "" });*/
+            
             var commodity  = await _commodityHttpClient.GetCommodityByIdAsync(commodityId);
             return View(commodity);
         }
@@ -240,6 +238,7 @@ namespace SalePortal.Controllers
             ViewBag.postOffices = new SelectList(postOffices, "Description", "Description");
             return PartialView("_postOffices");
         }
+
 
     }
 }
