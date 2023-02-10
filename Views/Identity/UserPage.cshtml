@@ -9,8 +9,10 @@
     var EmailAddress = claims[4].ToString().Split(':')[1].Trim().ToString();
     var PhoneNumber = claims[5].ToString().Split(':')[1].Trim().ToString();
 }
+
 <input id="userId" type="hidden" value="@userId" />
 <div class="text-center">
+    <h2 class="text-center text-success">@ViewData["AddedOder"]</h2>
     <h1>@localizer["User page"]</h1>
     <img src="Icons/user1.png" width="50" />
     <h2>@Name @SurName</h2>

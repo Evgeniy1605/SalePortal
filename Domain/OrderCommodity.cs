@@ -30,6 +30,19 @@ namespace SalePortal.Domain
 
         }
 
+        public async Task AddOrderAsync(int commodityId, int customerId, string typeOfDelivery)
+        {
+            CommodityOrderEntity order = new CommodityOrderEntity();
+            order.Delivery = typeOfDelivery;
+            var customer = await _userHttpClient.GetUserByIdAsync(customerId);
+            order.CustomerId = customerId;
+            var commodity = await _commodityHttpClient.GetCommodityByIdAsync(commodityId);
+            order.CommodityOwnerId = commodity.OwnerId;
+            order.CommodityId = commodityId;
+            var owner = await _userHttpClient.GetUserByIdAsync(commodity.OwnerId);
+            await _orderHttp.PostOrderAsync(order);
+        }
+
         public async Task ApproveOrderAsync(int orderId)
         {
 
